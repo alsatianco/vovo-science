@@ -271,7 +271,23 @@
     wrap.appendChild(controls);
 
     function clearHi() { spans.forEach(function (s) { s.classList.remove("hi"); }); }
-    function highlightAt(ci) {
+    function highlightAt(ci, ciEnd) {
+      // Range mode: light up every word whose start falls in [ci, ciEnd).
+      if (ciEnd != null) {
+        clearHi();
+        var first = null;
+        for (var k = 0; k < spans.length; k++) {
+          if (spans[k]._start >= ci && spans[k]._start < ciEnd) {
+            spans[k].classList.add("hi");
+            if (!first) first = spans[k];
+          }
+        }
+        if (first) {
+          try { first.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) {}
+        }
+        return;
+      }
+      // Single-word mode (synth boundary events, click-to-hear).
       for (var i = 0; i < spans.length; i++) {
         if (ci >= spans[i]._start && ci < spans[i]._end) {
           clearHi(); spans[i].classList.add("hi");

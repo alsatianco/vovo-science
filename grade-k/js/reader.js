@@ -64,28 +64,59 @@
     /* Active spans/tokens for karaoke highlighting */
     var activeSpans  = (isVi && vi) ? vi.spans  : en.spans;
     var activeTokens = (isVi && vi) ? vi.tokens : en.tokens;
-    var activeIdx    = -1;
+    var activeIndices = [];
 
-    function setActive(idx) {
-      if (idx === activeIdx) return;
-      if (activeIdx >= 0 && activeSpans[activeIdx]) activeSpans[activeIdx].classList.remove("rd-word--active");
-      activeIdx = idx;
-      if (idx >= 0 && activeSpans[idx]) {
-        activeSpans[idx].classList.add("rd-word--active");
-        try { activeSpans[idx].scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch(e) {}
+    function clearActiveSpans() {
+      for (var k = 0; k < activeIndices.length; k++) {
+        var sp = activeSpans[activeIndices[k]];
+        if (sp) sp.classList.remove("rd-word--active");
+      }
+      activeIndices = [];
+    }
+    function setActiveIndices(indices) {
+      // Cheap no-op when the active set is unchanged.
+      if (indices.length === activeIndices.length) {
+        var same = true;
+        for (var i = 0; i < indices.length; i++) {
+          if (indices[i] !== activeIndices[i]) { same = false; break; }
+        }
+        if (same) return;
+      }
+      clearActiveSpans();
+      activeIndices = indices.slice();
+      var first = null;
+      for (var j = 0; j < indices.length; j++) {
+        var sp = activeSpans[indices[j]];
+        if (sp) { sp.classList.add("rd-word--active"); if (!first) first = sp; }
+      }
+      if (first) {
+        try { first.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e) {}
       }
     }
+    function setActive(idx) {
+      setActiveIndices(idx >= 0 ? [idx] : []);
+    }
     function clearActive() {
-      if (activeIdx >= 0 && activeSpans[activeIdx]) activeSpans[activeIdx].classList.remove("rd-word--active");
-      activeIdx = -1;
+      clearActiveSpans();
     }
 
     function narrate() {
       clearActive();
       if (Sound.isMuted()) return;
       var lang = (isVi && textVi) ? "vi" : "en";
-      Sound.narrateKaraoke(activeText, function (charIndex) {
-        setActive(findToken(activeTokens, charIndex));
+      Sound.narrateKaraoke(activeText, function (charIndex, charEnd) {
+        if (charEnd != null) {
+          // Phrase-range mode: highlight every token starting inside [charIndex, charEnd).
+          var indices = [];
+          for (var i = 0; i < activeTokens.length; i++) {
+            if (activeTokens[i].start >= charIndex && activeTokens[i].start < charEnd) {
+              indices.push(i);
+            }
+          }
+          setActiveIndices(indices);
+        } else {
+          setActive(findToken(activeTokens, charIndex));
+        }
       }, clearActive, lang);
     }
 

@@ -36,6 +36,9 @@
   var lastCancelAt = -99999;  // throttle deliberate cancels
   var CANCEL_GAP = 550;       // ms minimum between cancels (anti-wedge)
   var hiTimers = [];          // karaoke highlight fallback timers
+  var hiCleanups = [];        // listeners attached for timing-based highlights
+  var HI_LEAD_SILENCE = 0.20; // typical TTS lead-in silence (s) before first word
+  var HI_TAIL_SILENCE = 0.10; // typical TTS trailing silence (s) after last word
 
   var DENY = /\b(albert|bad news|good news|bahh|bells|boing|bubbles|cellos|jester|organ|superstar|trinoids|whisper|wobble|zarvox|deranged|hysterical|junior|ralph|fred|kathy|princess|bruce|agnes|grandma|grandpa|reed|rocko|sandy|shelley|eddy|flo|novelty)\b/i;
   var NICE = ["ava", "allison", "samantha", "susan", "victoria", "karen", "moira",
@@ -75,11 +78,54 @@
     setInterval(function () { try { if (synth.speaking) synth.resume(); } catch (e) {} }, 7000);
   }
 
-  function clearHi() { for (var i = 0; i < hiTimers.length; i++) clearTimeout(hiTimers[i]); hiTimers = []; }
+  function clearHi() {
+    for (var i = 0; i < hiTimers.length; i++) clearTimeout(hiTimers[i]);
+    hiTimers = [];
+    for (var j = 0; j < hiCleanups.length; j++) {
+      try { hiCleanups[j](); } catch (e) {}
+    }
+    hiCleanups = [];
+  }
 
   function audioSrcFor(text) {
     var map = window.TTS_AUDIO || null;
     return map && text ? map[text] || null : null;
+  }
+
+  function timingStartsFor(text) {
+    var map = window.TTS_TIMINGS || null;
+    var starts = map && text ? map[text] : null;
+    return starts && starts.length ? starts : null;
+  }
+
+  // Split text into punctuation-bounded phrases for karaoke highlight.
+  // Each entry is { startChar, endChar, words } where startChar/endChar are
+  // inclusive/exclusive char offsets into `text`. We highlight an entire
+  // phrase at a time, mapped proportionally to the WAV duration — this is
+  // far more drift-tolerant than per-word timings against expressive speech.
+  function splitPhrases(text) {
+    var phrases = [];
+    if (!text) return phrases;
+    var re = /[^.!?,;:\n]+[.!?,;:\n]*/g, m;
+    while ((m = re.exec(text))) {
+      var seg = m[0];
+      var leading = (seg.match(/^\s*/) || [""])[0].length;
+      var trailing = (seg.match(/\s*$/) || [""])[0].length;
+      var startChar = m.index + leading;
+      var endChar = m.index + seg.length - trailing;
+      if (endChar <= startChar) continue;
+      var wc = (seg.match(/\S+/g) || []).length;
+      if (!wc) continue;
+      phrases.push({ startChar: startChar, endChar: endChar, words: wc });
+    }
+    if (!phrases.length && text.trim()) {
+      phrases.push({
+        startChar: 0,
+        endChar: text.length,
+        words: (text.match(/\S+/g) || []).length || 1
+      });
+    }
+    return phrases;
   }
 
   function canSpeakItem(item) {
@@ -113,24 +159,36 @@
   function startTimedHighlights(item, audio) {
     if (!item.onWord) return;
     clearHi();
-    var starts = [], re = /\S+/g, m;
-    while ((m = re.exec(item.text))) starts.push(m.index);
-    if (!starts.length) return;
-
+    var phrases = splitPhrases(item.text);
+    if (!phrases.length) return;
+    var totalWords = phrases.reduce(function (a, p) { return a + p.words; }, 0) || 1;
     var scheduled = false;
+
+    function fireAll() {
+      var dur = (isFinite(audio.duration) && audio.duration > 0)
+        ? audio.duration
+        : Math.max(1.0, totalWords * 0.40);
+      var speech = Math.max(0.4, dur - HI_LEAD_SILENCE - HI_TAIL_SILENCE);
+      var t = HI_LEAD_SILENCE;
+      phrases.forEach(function (p) {
+        var ms = Math.max(0, t * 1000);
+        hiTimers.push(setTimeout(function () {
+          item.onWord(p.startChar, p.endChar);
+        }, ms));
+        t += speech * (p.words / totalWords);
+      });
+    }
+
     function schedule() {
       if (scheduled) return;
       scheduled = true;
-      var durationMs = (isFinite(audio.duration) && audio.duration > 0) ? audio.duration * 1000 : starts.length * 420;
-      var per = Math.max(180, durationMs / starts.length);
-      starts.forEach(function (idx, i) {
-        hiTimers.push(setTimeout(function () { item.onWord(idx); }, i * per));
-      });
+      fireAll();
     }
 
     audio.addEventListener("loadedmetadata", schedule, { once: true });
     audio.addEventListener("playing", schedule, { once: true });
-    hiTimers.push(setTimeout(schedule, 800));
+    // Safety net if neither event fires promptly (cached audio, Safari quirks).
+    hiTimers.push(setTimeout(schedule, 600));
   }
 
   function doSpeakFile(item, src) {
@@ -181,14 +239,25 @@
     try { synth.speak(u); } catch (e) { current = null; if (item.onEnd) item.onEnd(); }
 
     // Highlight fallback for engines that don't fire word boundaries (Safari).
+    // Use phrase-level highlighting (one call per punctuation-bounded chunk)
+    // so we don't visibly drift away from the spoken voice.
     if (item.onWord) {
       clearHi();
-      var starts = [], re = /\S+/g, m;
-      while ((m = re.exec(item.text))) starts.push(m.index);
-      var per = 360;
+      var phrasesS = splitPhrases(item.text);
+      var totalWordsS = phrasesS.reduce(function (a, p) { return a + p.words; }, 0) || 1;
+      // Roughly 0.40s per word at synth rate ~0.92; budget = leading delay + per-word time.
+      var perWordSec = 0.40;
       hiTimers.push(setTimeout(function () {
         if (item._got) return;
-        starts.forEach(function (idx, i) { hiTimers.push(setTimeout(function () { if (!item._got) item.onWord(idx); }, i * per)); });
+        var t = 0;
+        phrasesS.forEach(function (p) {
+          var ms = Math.max(0, t * 1000);
+          hiTimers.push(setTimeout(function () {
+            if (item._got) return;
+            item.onWord(p.startChar, p.endChar);
+          }, ms));
+          t += perWordSec * p.words;
+        });
       }, 380));
     }
   }
