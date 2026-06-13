@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "game-science2",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "/Users/duc.nguyen/Downloads/gameVoVo/game-science2"],
+      "port": 8765
+    }
+  ]
+}

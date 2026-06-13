@@ -1,0 +1,111 @@
+/* ============================================================
+   theme.css - design tokens & per-world theming
+   Vintage storybook, kid-friendly. All offline; no web fonts.
+   ============================================================ */
+
+:root {
+  /* Kid-friendly rounded font stack (all locally available, no CDN) */
+  --font-fun: "Chalkboard SE", "Comic Sans MS", "Comic Neue", "Baloo 2",
+              "Segoe UI Rounded", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Fluid type scale (clamp = scales with viewport, never too small/large) */
+  --fs-xl: clamp(2rem, 4.2vw, 3.6rem);
+  --fs-lg: clamp(1.4rem, 2.6vw, 2.4rem);
+  --fs-md: clamp(1.1rem, 1.7vw, 1.6rem);
+  --fs-sm: clamp(0.95rem, 1.3vw, 1.2rem);
+
+  /* Spacing scale */
+  --sp-1: clamp(6px, 0.8vw, 10px);
+  --sp-2: clamp(10px, 1.4vw, 18px);
+  --sp-3: clamp(16px, 2.2vw, 30px);
+  --sp-4: clamp(24px, 3.4vw, 48px);
+
+  /* Shape & shadow: soft storybook tactility */
+  --radius: clamp(18px, 2.2vw, 28px);
+  --radius-sm: 12px;
+  --shadow-card: 0 8px 0 rgba(117, 88, 50, .16), 0 20px 34px rgba(79, 56, 32, .18);
+  --shadow-soft: 0 8px 18px rgba(79, 56, 32, .15);
+  --ring: 0 0 0 5px rgba(255,255,255,.9), 0 0 0 9px var(--w-primary);
+
+  /* Neutral ink */
+  --ink: #30251c;
+  --ink-soft: #756554;
+  --paper: #fff8e8;
+  --paper-deep: #f5e4c4;
+  --paper-line: rgba(117, 88, 50, .16);
+  --storybook-red: #d95d50;
+  --storybook-blue: #4f90bd;
+  --storybook-green: #6c9f5d;
+  --storybook-gold: #e7b94b;
+
+  /* Minimum kid touch target */
+  --touch: 64px;
+
+  /* Default (home) palette, overridden per world below */
+  --w-primary: #d95d50;
+  --w-primary-d: #934032;
+  --w-accent: #4f90bd;
+  --w-bg-top: #f8e7c8;
+  --w-bg-bot: #dcebcf;
+  --w-ink-on: #4b2b20;
+}
+
+/* ---- Per-world themes ---- */
+body[data-world="home"] {
+  --w-primary: #d95d50; --w-primary-d: #934032; --w-accent: #4f90bd;
+  --w-bg-top: #f8e7c8; --w-bg-bot: #dcebcf; --w-ink-on: #4b2b20;
+}
+body[data-world="life"] {
+  --w-primary: #6c9f5d; --w-primary-d: #3f6f38; --w-accent: #e7b94b;
+  --w-bg-top: #dcebcf; --w-bg-bot: #fff3d6; --w-ink-on: #243f25;
+}
+body[data-world="physical"] {
+  --w-primary: #dc7b38; --w-primary-d: #95491f; --w-accent: #8b79ba;
+  --w-bg-top: #f8dcc0; --w-bg-bot: #e8dfef; --w-ink-on: #4e2c13;
+}
+body[data-world="earth"] {
+  --w-primary: #4f90bd; --w-primary-d: #2d5f83; --w-accent: #e7b94b;
+  --w-bg-top: #cfe7ef; --w-bg-bot: #fff3d6; --w-ink-on: #193c50;
+}
+
+/* ---- Base reset ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-fun);
+  color: var(--ink);
+  background:
+    linear-gradient(rgba(255,255,255,.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px),
+    radial-gradient(ellipse at top, rgba(255, 248, 232, .74), transparent 62%),
+    linear-gradient(170deg, var(--w-bg-top), var(--w-bg-bot));
+  background-size: 34px 34px, 34px 34px, auto, auto;
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background 0.5s ease;
+  overflow: hidden; /* screens manage their own scroll */
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: .24;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(91, 66, 38, .12) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.16) 0 1px, transparent 1px 7px);
+  mix-blend-mode: multiply;
+}
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

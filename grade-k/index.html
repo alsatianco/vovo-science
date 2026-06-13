@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#3aa655" />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <title>Science Play - Fun Science Games for Kids</title>
+  <link rel="stylesheet" href="styles/theme.css" />
+  <link rel="stylesheet" href="styles/layout.css?v=5" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/games.css" />
+</head>
+<body data-world="home">
+
+  <!-- ============================================================= -->
+  <!--  INLINE SVG SPRITE  (defined once, referenced via <use>)      -->
+  <!--  All icons use a 0 0 64 64 viewBox and currentColor so they   -->
+  <!--  inherit theme colors. Zero external image files.             -->
+  <!-- ============================================================= -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+
+      <!-- ===== Mascots ===== -->
+      <symbol id="m-sprout" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="58" rx="16" ry="4" fill="rgba(0,0,0,.12)"/>
+        <path d="M32 56V30" stroke="#2f9e44" stroke-width="6" stroke-linecap="round"/>
+        <path d="M32 38C26 38 18 34 16 26c8-2 14 2 16 12z" fill="#51cf66"/>
+        <path d="M32 32c5-2 12-7 13-15-7-1-12 4-13 15z" fill="#69db7c"/>
+        <circle cx="32" cy="22" r="13" fill="#8ce99a"/>
+        <circle cx="27" cy="21" r="2.4" fill="#1b4332"/>
+        <circle cx="37" cy="21" r="2.4" fill="#1b4332"/>
+        <path d="M28 27q4 4 8 0" stroke="#1b4332" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="23" cy="25" r="2" fill="#ff8787" opacity=".7"/>
+        <circle cx="41" cy="25" r="2" fill="#ff8787" opacity=".7"/>
+      </symbol>
+
+      <symbol id="m-spark" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="58" rx="15" ry="4" fill="rgba(0,0,0,.12)"/>
+        <path d="M34 6 18 36h12l-4 22 22-32H34l6-20z" fill="#ffd43b" stroke="#f59f00" stroke-width="2" stroke-linejoin="round"/>
+        <circle cx="28" cy="30" r="2.4" fill="#5f3dc4"/>
+        <circle cx="37" cy="30" r="2.4" fill="#5f3dc4"/>
+        <path d="M28 35q4 3 8 0" stroke="#5f3dc4" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </symbol>
+
+      <symbol id="m-cloud" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="58" rx="16" ry="4" fill="rgba(0,0,0,.12)"/>
+        <path d="M20 46a12 12 0 0 1-1-24 16 16 0 0 1 30-2 11 11 0 0 1 3 26z" fill="#fff"/>
+        <path d="M20 46a12 12 0 0 1-1-24 16 16 0 0 1 30-2 11 11 0 0 1 3 26z" fill="none" stroke="#a5d8ff" stroke-width="2"/>
+        <circle cx="26" cy="32" r="2.6" fill="#1971c2"/>
+        <circle cx="38" cy="32" r="2.6" fill="#1971c2"/>
+        <path d="M27 38q5 4 10 0" stroke="#1971c2" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="21" cy="37" r="2.2" fill="#74c0fc" opacity=".8"/>
+        <circle cx="43" cy="37" r="2.2" fill="#74c0fc" opacity=".8"/>
+      </symbol>
+
+      <!-- ===== UI icons ===== -->
+      <symbol id="i-home" viewBox="0 0 64 64">
+        <path d="M32 8 6 30h6v26h16V40h8v16h16V30h6z" fill="currentColor"/>
+      </symbol>
+      <symbol id="i-back" viewBox="0 0 64 64">
+        <path d="M40 10 18 32l22 22" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="i-play" viewBox="0 0 64 64">
+        <path d="M18 12 50 32 18 52z" fill="currentColor"/>
+      </symbol>
+      <symbol id="i-sound-on" viewBox="0 0 64 64">
+        <path d="M10 24h10l14-12v40L20 40H10z" fill="currentColor"/>
+        <path d="M42 22a14 14 0 0 1 0 20M48 16a22 22 0 0 1 0 32" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="i-sound-off" viewBox="0 0 64 64">
+        <path d="M10 24h10l14-12v40L20 40H10z" fill="currentColor"/>
+        <path d="M44 24 58 38M58 24 44 38" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="i-star" viewBox="0 0 64 64">
+        <path d="M32 6l7.6 15.4 17 2.5-12.3 12 2.9 16.9L32 49.3 16.8 52.8l2.9-16.9-12.3-12 17-2.5z"
+              fill="currentColor"/>
+      </symbol>
+      <symbol id="i-replay" viewBox="0 0 64 64">
+        <path d="M50 24a22 22 0 1 0 4 14" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+        <path d="M52 8v18H34z" fill="currentColor"/>
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 64 64">
+        <path d="M14 34l12 12 24-28" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+
+      <!-- ===== Unit icons (Life) ===== -->
+      <symbol id="u-plants" viewBox="0 0 64 64">
+        <path d="M32 56V28" stroke="#2f9e44" stroke-width="5" stroke-linecap="round"/>
+        <path d="M32 40c-7 0-13-5-14-12 8-1 13 4 14 12z" fill="#51cf66"/>
+        <path d="M32 34c6-1 12-7 12-15-8 0-12 6-12 15z" fill="#69db7c"/>
+        <circle cx="32" cy="20" r="9" fill="#ffd43b"/>
+        <circle cx="32" cy="20" r="4" fill="#fab005"/>
+      </symbol>
+      <symbol id="u-animals" viewBox="0 0 64 64">
+        <circle cx="32" cy="36" r="18" fill="#ffa94d"/>
+        <path d="M16 20l6 12-12-2zM48 20l-6 12 12-2z" fill="#ffa94d"/>
+        <circle cx="25" cy="34" r="3" fill="#3d2b1f"/>
+        <circle cx="39" cy="34" r="3" fill="#3d2b1f"/>
+        <path d="M32 40v4M26 46q6 4 12 0" stroke="#3d2b1f" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="u-traits" viewBox="0 0 64 64">
+        <circle cx="24" cy="28" r="14" fill="#da77f2"/>
+        <circle cx="46" cy="44" r="9" fill="#eebefa"/>
+        <circle cx="20" cy="26" r="2.3" fill="#3d2b1f"/><circle cx="28" cy="26" r="2.3" fill="#3d2b1f"/>
+        <circle cx="43" cy="43" r="1.6" fill="#3d2b1f"/><circle cx="49" cy="43" r="1.6" fill="#3d2b1f"/>
+      </symbol>
+      <symbol id="u-living" viewBox="0 0 64 64">
+        <path d="M32 52C18 42 10 34 10 24a11 11 0 0 1 22-4 11 11 0 0 1 22 4c0 10-8 18-22 28z" fill="#ff6b9d"/>
+        <path d="M40 26l-10 14-6-7" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="u-lifecycle" viewBox="0 0 64 64">
+        <path d="M48 22a20 20 0 1 0 4 16" fill="none" stroke="#2f9e44" stroke-width="6" stroke-linecap="round"/>
+        <path d="M50 8v16H34z" fill="#2f9e44"/>
+        <circle cx="32" cy="32" r="6" fill="#ffd43b"/>
+      </symbol>
+
+      <!-- ===== Unit icons (Physical) ===== -->
+      <symbol id="u-push" viewBox="0 0 64 64">
+        <rect x="30" y="30" width="22" height="22" rx="3" fill="#9775fa"/>
+        <path d="M8 41h16M18 33l8 8-8 8" stroke="#f76707" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="u-interactions" viewBox="0 0 64 64">
+        <circle cx="20" cy="38" r="11" fill="#ff922b"/>
+        <circle cx="44" cy="38" r="11" fill="#9775fa"/>
+        <path d="M32 14l3 7-7-2zM30 12l-5 6 7 1z" fill="#ffd43b"/>
+      </symbol>
+      <symbol id="u-energy" viewBox="0 0 64 64">
+        <path d="M36 6 18 36h12l-4 22 22-32H36l6-20z" fill="#ffd43b" stroke="#f59f00" stroke-width="2.5" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="u-sun" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="13" fill="#ffd43b"/>
+        <g stroke="#fab005" stroke-width="4" stroke-linecap="round">
+          <path d="M32 6v8M32 50v8M6 32h8M50 32h8M13 13l6 6M45 45l6 6M51 13l-6 6M19 45l-6 6"/>
+        </g>
+      </symbol>
+      <symbol id="u-shade" viewBox="0 0 64 64">
+        <path d="M32 16a22 22 0 0 1 22 14H10a22 22 0 0 1 22-14z" fill="#fa5252"/>
+        <path d="M32 30v22M32 52a6 6 0 0 0 8 0" stroke="#495057" stroke-width="4" fill="none" stroke-linecap="round"/>
+      </symbol>
+
+      <!-- ===== Unit icons (Earth) ===== -->
+      <symbol id="u-weather" viewBox="0 0 64 64">
+        <circle cx="24" cy="24" r="10" fill="#ffd43b"/>
+        <path d="M26 50a11 11 0 0 1-1-22 14 14 0 0 1 27-2 10 10 0 0 1 2 24z" fill="#fff" stroke="#a5d8ff" stroke-width="2.5"/>
+      </symbol>
+      <symbol id="u-environment" viewBox="0 0 64 64">
+        <path d="M8 52c8-2 16-2 24-2s16 0 24 2" stroke="#2f9e44" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M44 50V34l-12-8-12 8v16z" fill="#e8590c"/>
+        <path d="M32 22 18 32h28z" fill="#f76707"/>
+        <rect x="28" y="40" width="8" height="10" fill="#ffd43b"/>
+      </symbol>
+      <symbol id="u-needs" viewBox="0 0 64 64">
+        <path d="M24 8c8 12 12 18 12 26a12 12 0 0 1-24 0c0-8 4-14 12-26z" fill="#4dabf7"/>
+        <circle cx="46" cy="42" r="12" fill="#ff8787"/>
+        <path d="M46 36v12M40 42h12" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="u-forecast" viewBox="0 0 64 64">
+        <path d="M22 38a11 11 0 0 1-1-22 14 14 0 0 1 27-2 10 10 0 0 1 2 24z" fill="#adb5bd"/>
+        <path d="M34 36 24 52h8l-3 8 12-18h-8l3-6z" fill="#ffd43b" stroke="#f59f00" stroke-width="1.5" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="u-earth" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="22" fill="#4dabf7"/>
+        <path d="M14 28c6 2 10-2 16 0s8 6 14 4M16 40c5-3 9 1 14-1s9-5 14-3" fill="none" stroke="#51cf66" stroke-width="5" stroke-linecap="round"/>
+        <path d="M32 18l3 5-5-1z" fill="#fff"/>
+      </symbol>
+
+      <!-- ===== Content icons (plants & shared) ===== -->
+      <symbol id="c-seed" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="34" rx="12" ry="18" fill="#b5835a"/>
+        <path d="M32 18c5 5 6 21 0 32" stroke="#8a5a36" stroke-width="2.5" fill="none"/>
+      </symbol>
+      <symbol id="c-seedling" viewBox="0 0 64 64">
+        <path d="M12 50h40" stroke="#8a5a36" stroke-width="6" stroke-linecap="round"/>
+        <path d="M32 50V30" stroke="#2f9e44" stroke-width="4" stroke-linecap="round"/>
+        <path d="M32 36c-6 0-11-4-12-9 6-1 11 3 12 9z" fill="#51cf66"/>
+        <path d="M32 34c5-1 10-5 10-11-6 0-10 5-10 11z" fill="#69db7c"/>
+      </symbol>
+      <symbol id="c-youngplant" viewBox="0 0 64 64">
+        <path d="M32 54V18" stroke="#2f9e44" stroke-width="5" stroke-linecap="round"/>
+        <path d="M32 42c-7 0-12-4-13-10 7-1 12 3 13 10z" fill="#51cf66"/>
+        <path d="M32 36c6-1 12-6 12-13-7 0-12 5-12 13z" fill="#69db7c"/>
+        <path d="M32 26c-5-1-9-4-9-9 5 0 9 3 9 9z" fill="#51cf66"/>
+      </symbol>
+      <symbol id="c-flower" viewBox="0 0 64 64">
+        <path d="M32 58V34" stroke="#2f9e44" stroke-width="4" stroke-linecap="round"/>
+        <path d="M30 44c-6-2-11-1-14 2 3 3 9 4 14-2z" fill="#51cf66"/>
+        <g fill="#ff8787">
+          <circle cx="32" cy="14" r="7"/><circle cx="20" cy="22" r="7"/>
+          <circle cx="44" cy="22" r="7"/><circle cx="24" cy="33" r="7"/><circle cx="40" cy="33" r="7"/>
+        </g>
+        <circle cx="32" cy="24" r="7" fill="#ffd43b"/>
+      </symbol>
+      <symbol id="c-fruit" viewBox="0 0 64 64">
+        <circle cx="32" cy="38" r="18" fill="#fa5252"/>
+        <circle cx="25" cy="33" r="5" fill="#ff8787"/>
+        <rect x="30" y="14" width="4" height="12" rx="2" fill="#8a5a36"/>
+        <path d="M34 18c1-5 5-8 10-8-1 6-5 9-10 8z" fill="#51cf66"/>
+      </symbol>
+      <symbol id="c-roots" viewBox="0 0 64 64">
+        <path d="M32 8v20" stroke="#8a5a36" stroke-width="5" stroke-linecap="round"/>
+        <path d="M32 28c-5 6-12 9-16 18M32 28c5 6 12 9 16 18M32 28v22" fill="none" stroke="#a9744f" stroke-width="4" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-leaf" viewBox="0 0 64 64">
+        <path d="M14 50C14 26 34 12 52 12c2 22-16 40-38 38z" fill="#51cf66"/>
+        <path d="M21 43C29 32 39 24 49 20" stroke="#2f9e44" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-stem" viewBox="0 0 64 64">
+        <path d="M32 56V10" stroke="#2f9e44" stroke-width="6" stroke-linecap="round"/>
+        <path d="M32 30c6-2 10-6 11-13" stroke="#51cf66" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M32 40c-6-2-10-6-11-13" stroke="#51cf66" stroke-width="4" fill="none" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-water" viewBox="0 0 64 64">
+        <path d="M32 8c10 14 16 22 16 30a16 16 0 0 1-32 0c0-8 6-16 16-30z" fill="#4dabf7"/>
+        <path d="M24 38a8 8 0 0 0 6 8" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-up" viewBox="0 0 64 64">
+        <path d="M32 54V16M18 30 32 14 46 30" fill="none" stroke="#f76707" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+
+      <!-- ===== Ported content icons (from sister repo) ===== -->
+      <symbol id="c-ball" viewBox="0 0 64 64">
+        <circle cx="32" cy="34" r="18" fill="#fa5252"/>
+        <path d="M14 34h36M32 16v36M19 21q13 9 26 0M19 47q13-9 26 0" stroke="#fff" stroke-width="2" fill="none"/>
+      </symbol>
+      <symbol id="c-beaver" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="52" rx="9" ry="4" fill="#5c3a1e"/>
+        <ellipse cx="32" cy="40" rx="15" ry="13" fill="#8a5a36"/>
+        <circle cx="32" cy="28" r="11" fill="#a9744f"/>
+        <circle cx="28" cy="27" r="2" fill="#2b2118"/><circle cx="36" cy="27" r="2" fill="#2b2118"/>
+        <rect x="29" y="31" width="6" height="5" rx="1" fill="#fff"/>
+      </symbol>
+      <symbol id="c-bird" viewBox="0 0 64 64">
+        <ellipse cx="29" cy="37" rx="16" ry="13" fill="#4dabf7"/>
+        <circle cx="42" cy="28" r="9" fill="#4dabf7"/>
+        <circle cx="44" cy="26" r="2" fill="#1b3a5b"/>
+        <path d="M51 27l9-3-6 7z" fill="#fab005"/>
+        <path d="M15 38q-10 2-12 8 10 1 16-4z" fill="#3b8fd6"/>
+        <path d="M28 49l-3 9 7-2z" fill="#fab005"/>
+      </symbol>
+      <symbol id="c-blossom" viewBox="0 0 64 64">
+        <path d="M32 56V34" stroke="#2f9e44" stroke-width="4" stroke-linecap="round"/>
+        <g fill="#faa2c1"><circle cx="32" cy="18" r="6"/><circle cx="23" cy="24" r="6"/><circle cx="41" cy="24" r="6"/><circle cx="26" cy="14" r="5"/><circle cx="38" cy="14" r="5"/></g>
+        <circle cx="32" cy="20" r="5" fill="#fff3bf"/>
+      </symbol>
+      <symbol id="c-bottle" viewBox="0 0 64 64">
+        <path d="M28 10h8v7l4 6v28a3 3 0 0 1-3 3h-10a3 3 0 0 1-3-3V23l4-6z" fill="#74c0fc" stroke="#4dabf7" stroke-width="2"/>
+        <rect x="27" y="30" width="10" height="6" fill="#fff" opacity=".6"/>
+      </symbol>
+      <symbol id="c-burrow" viewBox="0 0 64 64">
+        <path d="M6 52h52V42a26 16 0 0 0-52 0z" fill="#a9744f"/>
+        <ellipse cx="32" cy="48" rx="11" ry="9" fill="#5c3a1e"/>
+        <ellipse cx="32" cy="50" rx="6" ry="5" fill="#2b2118"/>
+      </symbol>
+      <symbol id="c-cactus" viewBox="0 0 64 64">
+        <rect x="27" y="20" width="10" height="36" rx="5" fill="#37b24d"/>
+        <path d="M27 36h-5a4 4 0 0 0-4 4v6M37 32h5a4 4 0 0 1 4 4v8" stroke="#37b24d" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <circle cx="32" cy="26" r="2" fill="#fff3bf"/>
+      </symbol>
+      <symbol id="c-car" viewBox="0 0 64 64">
+        <path d="M12 39l5-12h24l8 12z" fill="#fa5252"/>
+        <rect x="8" y="37" width="48" height="13" rx="4" fill="#f76707"/>
+        <rect x="19" y="29" width="9" height="9" rx="1" fill="#a5d8ff"/><rect x="32" y="29" width="9" height="9" rx="1" fill="#a5d8ff"/>
+        <circle cx="20" cy="51" r="6" fill="#2b2118"/><circle cx="44" cy="51" r="6" fill="#2b2118"/>
+      </symbol>
+      <symbol id="c-cart" viewBox="0 0 64 64">
+        <rect x="12" y="24" width="38" height="16" rx="4" fill="#fa5252"/>
+        <path d="M50 28l9-5" stroke="#f59f00" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="22" cy="46" r="5" fill="#2b2118"/><circle cx="42" cy="46" r="5" fill="#2b2118"/>
+      </symbol>
+      <symbol id="c-cat" viewBox="0 0 64 64">
+        <circle cx="32" cy="37" r="16" fill="#adb5bd"/>
+        <path d="M18 25l4 10-10-4zM46 25l-4 10 10-4z" fill="#adb5bd"/>
+        <circle cx="26" cy="35" r="2.5" fill="#2b2118"/><circle cx="38" cy="35" r="2.5" fill="#2b2118"/>
+        <path d="M32 40v3M27 44q5 3 10 0" stroke="#2b2118" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M21 41l-9 1m9 3-9 3m31-7 9 1m-9 3 9 3" stroke="#868e96" stroke-width="1.4"/>
+      </symbol>
+      <symbol id="c-chick" viewBox="0 0 64 64">
+        <circle cx="32" cy="40" r="13" fill="#ffd43b"/>
+        <circle cx="32" cy="25" r="9" fill="#ffe066"/>
+        <circle cx="29" cy="24" r="1.7" fill="#2b2118"/><circle cx="35" cy="24" r="1.7" fill="#2b2118"/>
+        <path d="M32 27l5 3-5 2z" fill="#f59f00"/>
+      </symbol>
+      <symbol id="c-claws" viewBox="0 0 64 64">
+        <circle cx="32" cy="42" r="13" fill="#ffd8a8"/>
+        <circle cx="19" cy="28" r="5" fill="#ffd8a8"/><circle cx="32" cy="23" r="5" fill="#ffd8a8"/><circle cx="45" cy="28" r="5" fill="#ffd8a8"/>
+        <path d="M23 16l-3-7M32 12V4M41 16l3-7" stroke="#f59f00" stroke-width="3" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-coat" viewBox="0 0 64 64">
+        <path d="M24 12l8 6 8-6 11 6-4 11-5-2v25H22V27l-5 2-4-11z" fill="#f76707" stroke="#e8590c" stroke-width="2"/>
+        <path d="M32 18v34" stroke="#e8590c" stroke-width="2"/>
+      </symbol>
+      <symbol id="c-cold" viewBox="0 0 64 64">
+        <rect x="27" y="8" width="8" height="36" rx="4" fill="#fff" stroke="#4dabf7" stroke-width="2"/>
+        <circle cx="31" cy="48" r="9" fill="#4dabf7"/>
+        <rect x="29" y="34" width="4" height="12" fill="#4dabf7"/>
+        <path d="M46 13v15M39 17l14 7M53 17l-14 7" stroke="#4dabf7" stroke-width="2.5" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-cow" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="38" rx="16" ry="14" fill="#f8f9fa"/>
+        <path d="M19 28c-3-6-1-12 3-14M45 28c3-6 1-12-3-14" stroke="#e9ecef" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <circle cx="24" cy="34" r="2.2" fill="#2b2118"/><circle cx="40" cy="34" r="2.2" fill="#2b2118"/>
+        <ellipse cx="32" cy="45" rx="8" ry="6" fill="#ffc9d6"/>
+        <circle cx="29" cy="45" r="1.4" fill="#2b2118"/><circle cx="35" cy="45" r="1.4" fill="#2b2118"/>
+        <circle cx="22" cy="42" r="3" fill="#ced4da"/>
+      </symbol>
+      <symbol id="c-dam" viewBox="0 0 64 64">
+        <rect x="8" y="48" width="48" height="10" rx="3" fill="#4dabf7"/>
+        <g fill="#8a5a36" stroke="#5c3a1e" stroke-width="1.5">
+          <rect x="12" y="22" width="40" height="7" rx="3"/><rect x="16" y="30" width="32" height="7" rx="3"/><rect x="12" y="38" width="40" height="7" rx="3"/>
+        </g>
+      </symbol>
+      <symbol id="c-desert" viewBox="0 0 64 64">
+        <circle cx="46" cy="20" r="8" fill="#ffd43b"/>
+        <rect x="6" y="36" width="52" height="22" fill="#ffd8a8"/>
+        <path d="M6 42c10-6 20 4 30-2s16 0 22 2" fill="none" stroke="#f0b27a" stroke-width="2"/>
+      </symbol>
+      <symbol id="c-dog" viewBox="0 0 64 64">
+        <circle cx="32" cy="36" r="16" fill="#8a5a36"/>
+        <ellipse cx="14" cy="32" rx="6" ry="13" fill="#5c3a1e"/><ellipse cx="50" cy="32" rx="6" ry="13" fill="#5c3a1e"/>
+        <circle cx="26" cy="34" r="2.4" fill="#fff"/><circle cx="38" cy="34" r="2.4" fill="#fff"/>
+        <circle cx="32" cy="41" r="3.4" fill="#2b2118"/>
+        <path d="M32 44v3" stroke="#2b2118" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-ear" viewBox="0 0 64 64">
+        <ellipse cx="23" cy="34" rx="6" ry="20" fill="#f1f3f5" stroke="#dee2e6" stroke-width="2"/>
+        <ellipse cx="41" cy="34" rx="6" ry="20" fill="#f1f3f5" stroke="#dee2e6" stroke-width="2"/>
+        <ellipse cx="23" cy="34" rx="3" ry="14" fill="#ffc9d6"/><ellipse cx="41" cy="34" rx="3" ry="14" fill="#ffc9d6"/>
+      </symbol>
+      <symbol id="c-fallleaf" viewBox="0 0 64 64">
+        <path d="M32 12c12 8 14 26 0 40-14-14-12-32 0-40z" fill="#e8590c"/>
+        <path d="M32 16v36M32 28l9-4M32 36l9-3M32 28l-9-4M32 36l-9-3" stroke="#a93e00" stroke-width="1.6"/>
+      </symbol>
+      <symbol id="c-feather" viewBox="0 0 64 64">
+        <path d="M50 12C30 16 18 32 14 50c14-2 32-12 38-30z" fill="#a5d8ff"/>
+        <path d="M45 18 18 46" stroke="#4dabf7" stroke-width="2"/>
+        <path d="M40 20l-7 7m13-2-10 10m14-3-12 12" stroke="#4dabf7" stroke-width="1.5"/>
+      </symbol>
+      <symbol id="c-fins" viewBox="0 0 64 64">
+        <path d="M32 10c-4 11-4 33 0 44 4-11 4-33 0-44z" fill="#4dabf7"/>
+        <path d="M32 24c-11-5-19 0-23 6 9 5 17 2 23-2zM32 24c11-5 19 0 23 6-9 5-17 2-23-2z" fill="#74c0fc"/>
+      </symbol>
+      <symbol id="c-fish" viewBox="0 0 64 64">
+        <path d="M12 32c8-12 28-12 36 0-8 12-28 12-36 0z" fill="#ffa94d"/>
+        <path d="M48 32l13-9v18z" fill="#f76707"/>
+        <circle cx="22" cy="29" r="2.5" fill="#2b2118"/>
+        <path d="M30 25q6 7 0 14" stroke="#f76707" stroke-width="2" fill="none"/>
+      </symbol>
+      <symbol id="c-frog" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="42" rx="18" ry="13" fill="#51cf66"/>
+        <circle cx="22" cy="25" r="8" fill="#51cf66"/><circle cx="42" cy="25" r="8" fill="#51cf66"/>
+        <circle cx="22" cy="23" r="3.4" fill="#fff"/><circle cx="42" cy="23" r="3.4" fill="#fff"/>
+        <circle cx="22" cy="23" r="1.7" fill="#2b2118"/><circle cx="42" cy="23" r="1.7" fill="#2b2118"/>
+        <path d="M24 46q8 6 16 0" stroke="#2f9e44" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-gentle" viewBox="0 0 64 64">
+        <path d="M22 32h18M34 25l7 7-7 7" stroke="#ffa94d" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="c-hen" viewBox="0 0 64 64">
+        <ellipse cx="29" cy="40" rx="15" ry="12" fill="#fff"/>
+        <circle cx="42" cy="30" r="8" fill="#fff"/>
+        <path d="M42 22q4-7 7-2-2 5-5 5z" fill="#fa5252"/>
+        <circle cx="44" cy="29" r="1.7" fill="#2b2118"/>
+        <path d="M49 31l6 1-6 2z" fill="#f59f00"/>
+        <path d="M15 42q-7 2-9 7 9 1 13-3z" fill="#e9ecef"/>
+      </symbol>
+      <symbol id="c-hot" viewBox="0 0 64 64">
+        <rect x="27" y="8" width="8" height="36" rx="4" fill="#fff" stroke="#fa5252" stroke-width="2"/>
+        <circle cx="31" cy="48" r="9" fill="#fa5252"/>
+        <rect x="29" y="22" width="4" height="24" fill="#fa5252"/>
+        <path d="M44 16l6-4m-6 12 7-2m-7 10 7 1" stroke="#fa5252" stroke-width="3" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-house" viewBox="0 0 64 64">
+        <path d="M8 32 32 12l24 20z" fill="#fa5252"/>
+        <rect x="14" y="32" width="36" height="22" fill="#ffd8a8"/>
+        <rect x="28" y="40" width="9" height="14" fill="#8a5a36"/>
+        <rect x="18" y="36" width="8" height="8" fill="#a5d8ff"/>
+      </symbol>
+      <symbol id="c-lion" viewBox="0 0 64 64">
+        <circle cx="32" cy="34" r="20" fill="#f59f00"/>
+        <circle cx="32" cy="34" r="13" fill="#ffd8a8"/>
+        <circle cx="27" cy="32" r="2.2" fill="#2b2118"/><circle cx="37" cy="32" r="2.2" fill="#2b2118"/>
+        <path d="M32 37v3M28 42q4 3 8 0" stroke="#2b2118" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-meat" viewBox="0 0 64 64">
+        <path d="M19 23a6 6 0 1 0-3 9l16 16a6 6 0 1 0 9 3 6 6 0 1 0 3-9L28 26a6 6 0 1 0-9-3z" fill="#f8f9fa" stroke="#ced4da" stroke-width="2"/>
+      </symbol>
+      <symbol id="c-nest" viewBox="0 0 64 64">
+        <path d="M10 38c0-6 10-10 22-10s22 4 22 10-10 12-22 12-22-6-22-12z" fill="#8a5a36"/>
+        <ellipse cx="32" cy="40" rx="14" ry="7" fill="#a9744f"/>
+        <circle cx="26" cy="38" r="5" fill="#fff3bf"/><circle cx="37" cy="39" r="5" fill="#fff3bf"/>
+      </symbol>
+      <symbol id="c-paper" viewBox="0 0 64 64">
+        <path d="M16 10h24l8 8v36H16z" fill="#fff" stroke="#adb5bd" stroke-width="2"/>
+        <path d="M40 10v8h8" fill="#e9ecef" stroke="#adb5bd" stroke-width="2"/>
+        <path d="M22 28h20M22 36h20M22 44h14" stroke="#adb5bd" stroke-width="2"/>
+      </symbol>
+      <symbol id="c-peel" viewBox="0 0 64 64">
+        <path d="M33 14c2 0 3 2 2 4-3 15-15 24-25 24 0 0 6 6 16 4 16-4 24-19 22-33-1-2-4-2-5 1z" fill="#ffd43b" stroke="#f59f00" stroke-width="2"/>
+      </symbol>
+      <symbol id="c-person" viewBox="0 0 64 64">
+        <circle cx="32" cy="20" r="9" fill="#ffd8a8"/>
+        <path d="M17 54c0-10 7-17 15-17s15 7 15 17z" fill="#4dabf7"/>
+      </symbol>
+      <symbol id="c-pins" viewBox="0 0 64 64">
+        <g fill="#fff" stroke="#fa5252" stroke-width="2">
+          <path d="M22 54c-2-10-2-20 0-26 1-4 5-4 6 0 2 6 2 16 0 26z"/>
+          <path d="M36 54c-2-10-2-20 0-26 1-4 5-4 6 0 2 6 2 16 0 26z"/>
+        </g>
+      </symbol>
+      <symbol id="c-pond" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="40" rx="24" ry="14" fill="#4dabf7"/>
+        <ellipse cx="32" cy="36" rx="20" ry="9" fill="#74c0fc"/>
+        <path d="M20 34c2 2 6 2 8 0M36 38c2 2 6 2 8 0" stroke="#fff" stroke-width="1.5" fill="none"/>
+      </symbol>
+      <symbol id="c-pull" viewBox="0 0 64 64">
+        <rect x="8" y="22" width="18" height="20" rx="3" fill="#9775fa"/>
+        <path d="M58 32H32M40 24l-8 8 8 8" stroke="#f76707" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="c-puppy" viewBox="0 0 64 64">
+        <circle cx="32" cy="37" r="15" fill="#d9a066"/>
+        <ellipse cx="17" cy="35" rx="6" ry="11" fill="#b07b3f"/><ellipse cx="47" cy="35" rx="6" ry="11" fill="#b07b3f"/>
+        <circle cx="26" cy="35" r="2.3" fill="#2b2118"/><circle cx="38" cy="35" r="2.3" fill="#2b2118"/>
+        <circle cx="32" cy="41" r="3" fill="#2b2118"/>
+        <path d="M32 44v3" stroke="#2b2118" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-push" viewBox="0 0 64 64">
+        <rect x="38" y="22" width="18" height="20" rx="3" fill="#9775fa"/>
+        <path d="M6 32h26M24 24l8 8-8 8" stroke="#f76707" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="c-rabbit" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="41" rx="13" ry="13" fill="#f1f3f5"/>
+        <ellipse cx="26" cy="18" rx="4.5" ry="13" fill="#f1f3f5"/><ellipse cx="38" cy="18" rx="4.5" ry="13" fill="#f1f3f5"/>
+        <ellipse cx="26" cy="18" rx="2" ry="9" fill="#ffc9d6"/><ellipse cx="38" cy="18" rx="2" ry="9" fill="#ffc9d6"/>
+        <circle cx="27" cy="39" r="2.2" fill="#2b2118"/><circle cx="37" cy="39" r="2.2" fill="#2b2118"/>
+        <circle cx="32" cy="44" r="2" fill="#ffc9d6"/>
+      </symbol>
+      <symbol id="c-rain" viewBox="0 0 64 64">
+        <path d="M18 36a10 10 0 0 1-1-20 14 14 0 0 1 27-2 10 10 0 0 1 2 22z" fill="#adb5bd"/>
+        <path d="M22 44l-3 9M32 44l-3 9M42 44l-3 9" stroke="#4dabf7" stroke-width="4" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-recycle" viewBox="0 0 64 64">
+        <path d="M18 24h28l-3 30a3 3 0 0 1-3 3H24a3 3 0 0 1-3-3z" fill="#37b24d"/>
+        <path d="M14 24h36" stroke="#2f9e44" stroke-width="4" stroke-linecap="round"/>
+        <path d="M32 31l-6 9h12z" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="c-rock" viewBox="0 0 64 64">
+        <path d="M9 49c2-13 11-23 23-23s21 10 23 23z" fill="#adb5bd"/>
+        <path d="M22 47l8-12 6 6 6-9" stroke="#868e96" stroke-width="2" fill="none"/>
+      </symbol>
+      <symbol id="c-roof" viewBox="0 0 64 64">
+        <path d="M6 36 32 14l26 22z" fill="#e8590c"/>
+        <rect x="14" y="36" width="36" height="18" fill="#f76707"/>
+        <rect x="28" y="42" width="9" height="12" fill="#8a5a36"/>
+      </symbol>
+      <symbol id="c-rope" viewBox="0 0 64 64">
+        <path d="M8 26c8 0 8 10 16 10s8-10 16-10 8 10 16 10" stroke="#f59f00" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M8 38c6 0 7 8 14 9" stroke="#e8870c" stroke-width="3" fill="none" stroke-linecap="round" opacity=".5"/>
+      </symbol>
+      <symbol id="c-snow" viewBox="0 0 64 64">
+        <path d="M18 34a10 10 0 0 1-1-20 14 14 0 0 1 27-2 10 10 0 0 1 2 22z" fill="#e9ecef" stroke="#ced4da" stroke-width="1.5"/>
+        <g fill="#74c0fc"><circle cx="22" cy="48" r="2.6"/><circle cx="32" cy="54" r="2.6"/><circle cx="42" cy="48" r="2.6"/></g>
+      </symbol>
+      <symbol id="c-strong" viewBox="0 0 64 64">
+        <path d="M6 32h30M26 16l20 16-20 16" stroke="#f76707" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="c-sunhat" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="44" rx="26" ry="7" fill="#ffd43b"/>
+        <path d="M20 44a12 12 0 0 1 24 0z" fill="#fab005"/>
+        <path d="M20 41a12 6 0 0 1 24 0z" fill="#ffe066"/>
+      </symbol>
+      <symbol id="c-swing" viewBox="0 0 64 64">
+        <path d="M12 12h40" stroke="#8a5a36" stroke-width="4" stroke-linecap="round"/>
+        <path d="M22 13v22M42 13v22" stroke="#adb5bd" stroke-width="3"/>
+        <rect x="19" y="35" width="26" height="7" rx="3" fill="#fa5252"/>
+      </symbol>
+      <symbol id="c-tap" viewBox="0 0 64 64">
+        <rect x="6" y="16" width="8" height="16" rx="2" fill="#868e96"/>
+        <path d="M10 20h18v8h7a13 13 0 0 1 13 13v2" fill="none" stroke="#adb5bd" stroke-width="6" stroke-linecap="round"/>
+        <path d="M48 48c0 4-3 7-6 7s-6-3-6-7c0-4 6-10 6-10s6 6 6 10z" fill="#4dabf7"/>
+      </symbol>
+      <symbol id="c-trash" viewBox="0 0 64 64">
+        <path d="M18 24h28l-3 30a3 3 0 0 1-3 3H24a3 3 0 0 1-3-3z" fill="#868e96"/>
+        <path d="M14 24h36" stroke="#495057" stroke-width="4" stroke-linecap="round"/>
+        <rect x="26" y="16" width="12" height="6" rx="2" fill="#868e96"/>
+        <path d="M28 32v18M36 32v18" stroke="#fff" stroke-width="2"/>
+      </symbol>
+      <symbol id="c-tree" viewBox="0 0 64 64">
+        <rect x="28" y="38" width="8" height="18" rx="2" fill="#8a5a36"/>
+        <circle cx="32" cy="24" r="15" fill="#37b24d"/>
+        <circle cx="20" cy="30" r="10" fill="#51cf66"/><circle cx="44" cy="30" r="10" fill="#51cf66"/>
+      </symbol>
+      <symbol id="c-turtle" viewBox="0 0 64 64">
+        <ellipse cx="29" cy="40" rx="16" ry="11" fill="#37b24d"/>
+        <path d="M15 40a14 9 0 0 1 28 0z" fill="#2f9e44"/>
+        <path d="M23 33l4 4 4-4 4 4" stroke="#51cf66" stroke-width="2" fill="none"/>
+        <circle cx="49" cy="36" r="6" fill="#69db7c"/><circle cx="50" cy="35" r="1.5" fill="#2b2118"/>
+        <path d="M17 49l-3 4M41 49l3 4" stroke="#69db7c" stroke-width="4" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="c-wings" viewBox="0 0 64 64">
+        <path d="M32 20c-14 0-26 7-29 19 14 3 25-3 29-11z" fill="#a5d8ff"/>
+        <path d="M32 20c14 0 26 7 29 19-14 3-25-3-29-11z" fill="#74c0fc"/>
+      </symbol>
+      <!-- ===== VoVo Brand Logo ===== -->
+      <!-- Full logo: eyes + VoVo / Science text (used on home hero) -->
+      <symbol id="brand-full" viewBox="0 0 220 118">
+        <!-- left eye -->
+        <circle cx="66" cy="46" r="34" fill="#fff" stroke="#1a1a1a" stroke-width="3.5"/>
+        <circle cx="66" cy="46" r="22" fill="#4da6e8"/>
+        <circle cx="66" cy="46" r="12" fill="#111"/>
+        <circle cx="58" cy="38" r="5.5" fill="#fff"/>
+        <circle cx="73" cy="52" r="2.5" fill="#fff"/>
+        <!-- right eye -->
+        <circle cx="154" cy="46" r="34" fill="#fff" stroke="#1a1a1a" stroke-width="3.5"/>
+        <circle cx="154" cy="46" r="22" fill="#4da6e8"/>
+        <circle cx="154" cy="46" r="12" fill="#111"/>
+        <circle cx="146" cy="38" r="5.5" fill="#fff"/>
+        <circle cx="161" cy="52" r="2.5" fill="#fff"/>
+        <!-- left eyebrow (V-shape) -->
+        <polyline points="44,14 57,26 70,14" fill="none" stroke="#e8531a" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- right eyebrow -->
+        <polyline points="132,14 145,26 158,14" fill="none" stroke="#e8531a" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- left sparkle ticks -->
+        <line x1="21" y1="33" x2="29" y2="38" stroke="#e8531a" stroke-width="4" stroke-linecap="round"/>
+        <line x1="17" y1="47" x2="27" y2="47" stroke="#e8531a" stroke-width="4" stroke-linecap="round"/>
+        <line x1="21" y1="61" x2="29" y2="56" stroke="#e8531a" stroke-width="4" stroke-linecap="round"/>
+        <!-- right sparkle ticks -->
+        <line x1="199" y1="33" x2="191" y2="38" stroke="#e8531a" stroke-width="4" stroke-linecap="round"/>
+        <line x1="203" y1="47" x2="193" y2="47" stroke="#e8531a" stroke-width="4" stroke-linecap="round"/>
+        <line x1="199" y1="61" x2="191" y2="56" stroke="#e8531a" stroke-width="4" stroke-linecap="round"/>
+        <!-- text: VoVo -->
+        <text x="110" y="95" text-anchor="middle" font-family="'Nunito','Fredoka One',sans-serif" font-weight="800" font-size="26" fill="#e8531a" letter-spacing="1">VoVo</text>
+        <!-- text: Science -->
+        <text x="110" y="112" text-anchor="middle" font-family="'Nunito',sans-serif" font-weight="600" font-size="14" fill="#888" letter-spacing="3">Science</text>
+      </symbol>
+
+      <!-- Mini logo: eyes only, no text (used in topbar) -->
+      <symbol id="brand-mini" viewBox="0 0 84 48">
+        <!-- left eye -->
+        <circle cx="21" cy="26" r="18" fill="#fff" stroke="#1a1a1a" stroke-width="2.5"/>
+        <circle cx="21" cy="26" r="11.5" fill="#4da6e8"/>
+        <circle cx="21" cy="26" r="6.5" fill="#111"/>
+        <circle cx="16.5" cy="21.5" r="3" fill="#fff"/>
+        <circle cx="24" cy="30" r="1.5" fill="#fff"/>
+        <!-- right eye -->
+        <circle cx="63" cy="26" r="18" fill="#fff" stroke="#1a1a1a" stroke-width="2.5"/>
+        <circle cx="63" cy="26" r="11.5" fill="#4da6e8"/>
+        <circle cx="63" cy="26" r="6.5" fill="#111"/>
+        <circle cx="58.5" cy="21.5" r="3" fill="#fff"/>
+        <circle cx="66" cy="30" r="1.5" fill="#fff"/>
+        <!-- eyebrows -->
+        <polyline points="11,8 18,15 25,8" fill="none" stroke="#e8531a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="53,8 60,15 67,8" fill="none" stroke="#e8531a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- left ticks -->
+        <line x1="1" y1="18" x2="6" y2="22" stroke="#e8531a" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="0" y1="27" x2="6" y2="27" stroke="#e8531a" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="1" y1="36" x2="6" y2="32" stroke="#e8531a" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- right ticks -->
+        <line x1="83" y1="18" x2="78" y2="22" stroke="#e8531a" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="84" y1="27" x2="78" y2="27" stroke="#e8531a" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="83" y1="36" x2="78" y2="32" stroke="#e8531a" stroke-width="2.5" stroke-linecap="round"/>
+      </symbol>
+
+    </defs>
+  </svg>
+
+  <!-- ============================================================= -->
+  <!--  APP ROOT — screens are injected/toggled by js/app.js         -->
+  <!-- ============================================================= -->
+  <div id="app">
+
+    <!-- Persistent top bar -->
+    <header id="topbar" class="topbar" hidden>
+      <a class="brand-mark" href="../index.html" aria-label="Back to VoVo Science portal" title="Back to grade selector">
+        <img src="assets/logo-mini.png" class="brand-mini-img" alt="VoVo Science" />
+      </a>
+      <button class="iconbtn" id="btn-home" aria-label="Go to home">
+        <svg class="icon"><use href="#i-home"></use></svg>
+      </button>
+      <button class="iconbtn" id="btn-back" aria-label="Go back">
+        <svg class="icon"><use href="#i-back"></use></svg>
+      </button>
+      <div class="topbar-title" id="topbar-title" aria-live="polite"></div>
+      <div class="starcount" id="starcount" aria-label="Stars earned">
+        <svg class="icon"><use href="#i-star"></use></svg>
+        <span id="starcount-num">0</span>
+      </div>
+      <button class="iconbtn" id="btn-sound" aria-label="Turn sound off" aria-pressed="true">
+        <svg class="icon"><use href="#i-sound-on"></use></svg>
+      </button>
+    </header>
+
+    <!-- Screen container -->
+    <main id="screen" class="screen" tabindex="-1"></main>
+
+  </div>
+
+  <!-- ============================================================= -->
+  <!--  SCRIPTS — classic tags, dependency order. No modules/fetch.  -->
+  <!-- ============================================================= -->
+  <script src="js/storage.js"></script>
+  <script src="js/audio.js?v=2"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/engine.js"></script>
+  <!-- activity engines (self-register on load) -->
+  <script src="js/engines/quiz.js"></script>
+  <script src="js/engines/matchPairs.js"></script>
+  <script src="js/engines/sequence.js"></script>
+  <script src="js/engines/colorByNumber.js"></script>
+  <script src="js/engines/sortBuckets.js"></script>
+  <script src="js/engines/buildPlay.js"></script>
+  <script src="js/engines/dotToDot.js"></script>
+  <script src="js/engines/traceWord.js"></script>
+  <!-- karaoke reading screen (before each activity) -->
+  <script src="js/reader.js?v=3"></script>
+  <!-- game runner -->
+  <script src="js/game.js"></script>
+  <!-- data: structure first, then content packs -->
+  <script src="js/data/worlds.js"></script>
+  <script src="js/data/plants.js"></script>
+  <!-- Life Science -->
+  <script src="js/data/animals.js"></script>
+  <script src="js/data/traits.js"></script>
+  <script src="js/data/livingNonliving.js"></script>
+  <script src="js/data/lifeCycle.js"></script>
+  <!-- Physical Science -->
+  <script src="js/data/pushesPulls.js"></script>
+  <script src="js/data/interactions.js"></script>
+  <script src="js/data/energyForces.js"></script>
+  <script src="js/data/sunlight.js"></script>
+  <script src="js/data/reducingWarming.js"></script>
+  <!-- Earth & Space -->
+  <script src="js/data/weatherClimate.js"></script>
+  <script src="js/data/changingEnv.js"></script>
+  <script src="js/data/needs.js"></script>
+  <script src="js/data/forecasting.js"></script>
+  <script src="js/data/humanImpact.js"></script>
+  <!-- boot -->
+  <script src="js/app.js?v=4"></script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "a1a04c5c2cc846bc8817b419c4cd07aa"}'></script><!-- End Cloudflare Web Analytics --></body>
+</html>
