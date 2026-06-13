@@ -21,6 +21,27 @@
   var elTitle     = document.getElementById("topbar-title");
   var elStarNum   = document.getElementById("starcount-num");
 
+  var soundPrompt = el("button.sound-start", {
+    type: "button",
+    "aria-label": "Play sound",
+    onclick: function () {
+      var hadPending = Sound.hasPending && Sound.hasPending();
+      Sound.warmUp();
+      if (!hadPending) Sound.narrate("Sound on!");
+      syncSoundPrompt();
+    }
+  }, [
+    el("span.sound-start-icon", null, svgUse("#i-sound-on")),
+    el("span.sound-start-text", { text: "Play sound" })
+  ]);
+  document.getElementById("app").appendChild(soundPrompt);
+
+  function syncSoundPrompt() {
+    var hidden = Sound.isMuted() || (Sound.isWarmed && Sound.isWarmed());
+    soundPrompt.hidden = hidden;
+    document.body.classList.toggle("sound-start-visible", !hidden);
+  }
+
   /* ---------- Routing ---------- */
   function go(hash) { window.location.hash = hash; }
 
@@ -61,6 +82,7 @@
     var ref = muted ? "#i-sound-off" : "#i-sound-on";
     use.setAttribute("href", ref);
     use.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", ref);
+    syncSoundPrompt();
   }
 
   function fullscreenElement() {
@@ -243,6 +265,7 @@
   /* ---------- Audio warm-up on first user gesture (autoplay policy) ---------- */
   function warm() {
     Sound.warmUp();
+    syncSoundPrompt();
     window.removeEventListener("pointerdown", warm);
     window.removeEventListener("keydown", warm);
   }
@@ -253,4 +276,5 @@
   window.addEventListener("hashchange", render);
   syncSoundButton();
   render();
+  syncSoundPrompt();
 })();

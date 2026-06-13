@@ -13,11 +13,11 @@
       {
         engine: "build",
         reading: {
-          text: "Motion is when something moves. To push means to press an object away from you. To pull means to drag or tug something closer to you.",
+          text: "Motion is when something moves. To push means to press an object away from you. To pull means to drag or tug something closer to you, often by a rope or handle.",
           icons: ["#c-push", "#c-pull"]
         },
         prompt: "Make the toys move!",
-        narration: "A push moves things away. A pull brings things closer. Pick a push or a pull, then tap the toy.",
+        narration: "Push the box with your hand to send it away! Pull the wagon by its rope to bring it close! Tap a card, then tap the toy.",
         goalText: "The toys are moving! Great pushing and pulling!",
         zones: [
           { id: "box",   label: "Push the box",   icon: "#u-push",  accepts: ["push"] },

@@ -78,6 +78,46 @@
 .bigbtn:active { transform: translateY(5px); box-shadow: 0 2px 0 var(--w-primary-d); }
 .bigbtn .icon { font-size: 1.3em; }
 
+/* ---------- First sound gesture ---------- */
+.sound-start {
+  position: fixed;
+  left: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 60;
+  transform: translateX(-50%);
+  min-height: var(--touch);
+  min-width: min(320px, calc(100vw - 36px));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 24px;
+  font-family: var(--font-fun);
+  font-size: var(--fs-md);
+  font-weight: 900;
+  color: #fffdf5;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.22), transparent 48%),
+    var(--w-primary);
+  border: 3px solid rgba(255,255,255,.92);
+  border-radius: 999px;
+  box-shadow: 0 8px 0 var(--w-primary-d), 0 16px 32px rgba(79, 56, 32, .24);
+  cursor: pointer;
+  transition: transform .1s ease, box-shadow .1s ease, opacity .18s ease;
+}
+.sound-start[hidden] { display: none; }
+.sound-start:hover { transform: translateX(-50%) translateY(-2px); }
+.sound-start:active { transform: translateX(-50%) translateY(5px); box-shadow: 0 3px 0 var(--w-primary-d), 0 10px 20px rgba(79, 56, 32, .18); }
+.sound-start-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.sound-start-icon .icon { width: 100%; height: 100%; }
+.sound-start-text { line-height: 1; }
+
 /* ---------- World cards (home) ---------- */
 .worldcard {
   position: relative;

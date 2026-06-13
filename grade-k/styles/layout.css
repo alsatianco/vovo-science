@@ -85,6 +85,9 @@
   flex-direction: column;
   outline: none;
 }
+body.sound-start-visible .screen {
+  padding-bottom: calc(var(--sp-3) + var(--touch));
+}
 
 /* A screen section that should fill all available height */
 .fill {

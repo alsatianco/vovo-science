@@ -28,6 +28,22 @@
   var starWrap = el("div", { "class": "star-count" });
   var soundBtn;
   var fullscreenBtn;
+  var soundPrompt = el("button", { "class": "sound-start", "aria-label": "Play sound" });
+  soundPrompt.appendChild(el("span", { "class": "sound-start-icon" }, icon("ic-speaker")));
+  soundPrompt.appendChild(el("span", { "class": "sound-start-text", text: "Play sound" }));
+  soundPrompt.addEventListener("click", function () {
+    var hadPending = Sound.hasPending && Sound.hasPending();
+    Sound.warmUp();
+    if (!hadPending) Sound.narrate("Sound on.");
+    syncSoundPrompt();
+  });
+
+  function syncSoundPrompt() {
+    var hidden = Sound.isMuted() || (Sound.isWarmed && Sound.isWarmed());
+    soundPrompt.hidden = hidden;
+    document.body.classList.toggle("sound-start-visible", !hidden);
+  }
+
   function buildBar() {
     UI.clear(bar);
     bar.appendChild(UI.iconButton("ic-home", "Home", showHome));
@@ -46,6 +62,7 @@
     soundBtn = UI.iconButton("ic-speaker", "Sound on/off", toggleSound);
     soundBtn.classList.toggle("muted", Sound.isMuted());
     bar.appendChild(soundBtn);
+    syncSoundPrompt();
     if (canEnterFullscreen()) {
       fullscreenBtn = UI.iconButton(fullscreenElement() ? "ic-fullscreen-exit" : "ic-fullscreen", fullscreenElement() ? "Exit full screen" : "Full screen", toggleFullscreen);
       fullscreenBtn.setAttribute("aria-pressed", String(!!fullscreenElement()));
@@ -57,6 +74,7 @@
     store.set("g1.muted", Sound.isMuted() ? "1" : "0");
     soundBtn.classList.toggle("muted", Sound.isMuted());
     if (!Sound.isMuted()) Sound.narrate("Sound on.");
+    syncSoundPrompt();
   }
 
   function fullscreenElement() {
@@ -94,6 +112,7 @@
   var screen = el("div", { "class": "screen" });
   app.appendChild(bar);
   app.appendChild(screen);
+  app.appendChild(soundPrompt);
   document.addEventListener("fullscreenchange", syncFullscreenButton);
   document.addEventListener("webkitfullscreenchange", syncFullscreenButton);
 
@@ -360,4 +379,5 @@
 
   /* ---------- boot ---------- */
   showHome();
+  syncSoundPrompt();
 })();

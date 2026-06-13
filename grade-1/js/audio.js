@@ -32,6 +32,7 @@
   var keepRefs = [];          // hold utterance refs so Chrome doesn't GC them
   var pending = null;         // at most ONE queued utterance (latest wins)
   var current = null;         // the utterance now speaking (for bookkeeping)
+  var currentAudio = null;
   var lastCancelAt = -99999;  // throttle deliberate cancels
   var CANCEL_GAP = 550;       // ms minimum between cancels (anti-wedge)
   var hiTimers = [];          // karaoke highlight fallback timers
@@ -76,6 +77,22 @@
 
   function clearHi() { for (var i = 0; i < hiTimers.length; i++) clearTimeout(hiTimers[i]); hiTimers = []; }
 
+  function audioSrcFor(text) {
+    var map = window.TTS_AUDIO || null;
+    return map && text ? map[text] || null : null;
+  }
+
+  function canSpeakItem(item) {
+    return supported || (!!item && !!audioSrcFor(item.text));
+  }
+
+  function stopFileAudio() {
+    if (!currentAudio) return;
+    var a = currentAudio;
+    currentAudio = null;
+    try { a.pause(); a.removeAttribute("src"); a.load(); } catch (e) {}
+  }
+
   function makeUtterance(text, rate) {
     if (!chosenVoice) chosenVoice = pickVoice();
     var u = new window.SpeechSynthesisUtterance(text);
@@ -86,8 +103,68 @@
     return u;
   }
 
-  // Speak one queued item NOW. Driven only when the engine is idle.
-  function doSpeak(item) {
+  function finishItem(item) {
+    current = null;
+    if (item.onWord) clearHi();
+    if (item.onEnd) item.onEnd();
+    pump();
+  }
+
+  function startTimedHighlights(item, audio) {
+    if (!item.onWord) return;
+    clearHi();
+    var starts = [], re = /\S+/g, m;
+    while ((m = re.exec(item.text))) starts.push(m.index);
+    if (!starts.length) return;
+
+    var scheduled = false;
+    function schedule() {
+      if (scheduled) return;
+      scheduled = true;
+      var durationMs = (isFinite(audio.duration) && audio.duration > 0) ? audio.duration * 1000 : starts.length * 420;
+      var per = Math.max(180, durationMs / starts.length);
+      starts.forEach(function (idx, i) {
+        hiTimers.push(setTimeout(function () { item.onWord(idx); }, i * per));
+      });
+    }
+
+    audio.addEventListener("loadedmetadata", schedule, { once: true });
+    audio.addEventListener("playing", schedule, { once: true });
+    hiTimers.push(setTimeout(schedule, 800));
+  }
+
+  function doSpeakFile(item, src) {
+    var a = new Audio(src);
+    var finished = false;
+    currentAudio = a;
+    current = item;
+    a.preload = "auto";
+    startTimedHighlights(item, a);
+    a.onended = function () {
+      if (finished) return; finished = true;
+      if (currentAudio === a) currentAudio = null;
+      finishItem(item);
+    };
+    a.onerror = function () {
+      if (finished) return; finished = true;
+      if (currentAudio === a) currentAudio = null;
+      if (item.onWord) clearHi();
+      item._skipFile = true;
+      doSpeak(item);
+    };
+    var play = a.play();
+    if (play && play.catch) {
+      play.catch(function () {
+        if (finished) return; finished = true;
+        if (currentAudio === a) currentAudio = null;
+        if (item.onWord) clearHi();
+        item._skipFile = true;
+        doSpeak(item);
+      });
+    }
+  }
+
+  function doSpeakSynth(item) {
     try { synth.resume(); } catch (e) {}
     var u = makeUtterance(item.text, item.rate);
     current = u;
@@ -97,9 +174,7 @@
     var finished = false;
     var finish = function () {
       if (finished) return; finished = true;
-      if (current === u) current = null;
-      if (item.onEnd) item.onEnd();
-      pump();
+      if (current === u) finishItem(item);
     };
     u.onend = finish;
     u.onerror = finish;
@@ -118,18 +193,29 @@
     }
   }
 
+  // Speak one queued item NOW. Driven only when the engine is idle.
+  function doSpeak(item) {
+    var src = !item._skipFile ? audioSrcFor(item.text) : null;
+    if (src) { doSpeakFile(item, src); return; }
+    if (supported) { doSpeakSynth(item); return; }
+    if (item.onEnd) item.onEnd();
+  }
+
   // If the engine is idle and something is queued, speak it.
   function pump() {
-    if (!supported || muted || !warmed || !pending) return;
-    if (synth.speaking || synth.pending) return;
+    if (muted || !warmed || !pending) return;
+    if (!canSpeakItem(pending)) { var skipped = pending; pending = null; if (skipped.onEnd) skipped.onEnd(); return; }
+    if (currentAudio) return;
+    if (supported && (synth.speaking || synth.pending)) return;
     var item = pending; pending = null;
     doSpeak(item);
   }
 
   // Routine narration: queue (latest wins), NEVER cancel.
   function enqueue(item) {
-    if (!supported || muted || !warmed || !item.text) { if (item.onEnd) item.onEnd(); return; }
+    if (muted || !item.text || !canSpeakItem(item)) { if (item.onEnd) item.onEnd(); return; }
     pending = item;
+    if (!warmed) return;
     pump();
   }
 
@@ -137,9 +223,15 @@
   // we haven't cancelled very recently (throttle = anti-wedge). Otherwise we
   // just queue it and let the current utterance finish.
   function interrupt(item) {
-    if (!supported || muted || !warmed || !item.text) { if (item.onEnd) item.onEnd(); return; }
+    if (muted || !item.text || !canSpeakItem(item)) { if (item.onEnd) item.onEnd(); return; }
     pending = item;
-    if (synth.speaking || synth.pending) {
+    if (!warmed) return;
+    if (currentAudio) {
+      stopFileAudio();
+      pump();
+      return;
+    }
+    if (supported && (synth.speaking || synth.pending)) {
       var now = Date.now();
       if (now - lastCancelAt > CANCEL_GAP) {
         lastCancelAt = now;
@@ -154,13 +246,14 @@
   var Sound = {
     isSupported: function () { return supported; },
     isMuted: function () { return muted; },
+    isWarmed: function () { return warmed; },
+    hasPending: function () { return !!pending; },
 
     warmUp: function () {
-      if (!supported) return;
-      chosenVoice = pickVoice() || chosenVoice;
       if (warmed) return;
+      if (supported) chosenVoice = pickVoice() || chosenVoice;
       warmed = true;
-      try { synth.resume(); } catch (e) {}
+      if (supported) { try { synth.resume(); } catch (e) {} }
       pump(); // flush anything queued before the first gesture
     },
 
@@ -179,10 +272,14 @@
 
     setMuted: function (m) {
       muted = !!m;
-      if (muted && supported) { pending = null; try { synth.cancel(); } catch (e) {} clearHi(); }
+      if (muted) {
+        pending = null; stopFileAudio();
+        if (supported) { try { synth.cancel(); } catch (e) {} }
+        clearHi();
+      }
     },
 
-    stop: function () { pending = null; clearHi(); if (supported) { try { synth.cancel(); } catch (e) {} } },
+    stop: function () { pending = null; clearHi(); stopFileAudio(); if (supported) { try { synth.cancel(); } catch (e) {} } },
 
     voiceName: function () { return chosenVoice ? chosenVoice.name : null; }
   };
