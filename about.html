@@ -57,6 +57,16 @@
       box-shadow: 0 5px 18px rgba(26,86,204,.18);
       flex: 0 0 auto;
     }
+    .home-logo-link {
+      display: inline-block;
+      line-height: 0;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+    .home-logo-link:focus-visible {
+      outline: 3px solid var(--brand-yellow);
+      outline-offset: 4px;
+    }
 
     h1 {
       font-size: clamp(2rem, 5vw, 3.2rem);
@@ -190,7 +200,9 @@
 <body>
   <main>
     <div class="brand">
-      <img src="assets/VoVo.jpg" alt="VoVo Science" />
+      <a class="home-logo-link" href="index.html" aria-label="VoVo Science homepage">
+        <img src="assets/VoVo.jpg" alt="VoVo Science" />
+      </a>
       <div>
         <div class="eyebrow">Free offline science games</div>
         <h1>About VoVo Science</h1>
