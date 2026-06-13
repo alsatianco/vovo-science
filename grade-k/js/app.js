@@ -17,6 +17,7 @@
   var btnHome     = document.getElementById("btn-home");
   var btnBack     = document.getElementById("btn-back");
   var btnSound    = document.getElementById("btn-sound");
+  var btnFullscreen = document.getElementById("btn-fullscreen");
   var elTitle     = document.getElementById("topbar-title");
   var elStarNum   = document.getElementById("starcount-num");
 
@@ -60,6 +61,38 @@
     var ref = muted ? "#i-sound-off" : "#i-sound-on";
     use.setAttribute("href", ref);
     use.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", ref);
+  }
+
+  function fullscreenElement() {
+    return document.fullscreenElement || document.webkitFullscreenElement || null;
+  }
+
+  function canEnterFullscreen() {
+    if (document.fullscreenEnabled === false || document.webkitFullscreenEnabled === false) return false;
+    return !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
+  }
+
+  function syncFullscreenButton() {
+    if (!btnFullscreen) return;
+    var active = !!fullscreenElement();
+    btnFullscreen.setAttribute("aria-pressed", String(active));
+    btnFullscreen.setAttribute("aria-label", active ? "Exit full screen" : "Enter full screen");
+    btnFullscreen.setAttribute("title", active ? "Exit full screen" : "Full screen");
+    var use = btnFullscreen.querySelector("use");
+    var ref = active ? "#i-fullscreen-exit" : "#i-fullscreen";
+    use.setAttribute("href", ref);
+    use.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", ref);
+  }
+
+  function toggleFullscreen() {
+    var root = document.documentElement;
+    if (fullscreenElement()) {
+      var exit = document.exitFullscreen || document.webkitExitFullscreen;
+      if (exit) return exit.call(document);
+      return;
+    }
+    var request = root.requestFullscreen || root.webkitRequestFullscreen;
+    if (request) return request.call(root);
   }
 
   /* ---------- HOME ---------- */
@@ -196,6 +229,16 @@
     syncSoundButton();
     if (!Sound.isMuted()) Sound.narrate("Sound on!");
   });
+  if (btnFullscreen && canEnterFullscreen()) {
+    btnFullscreen.hidden = false;
+    btnFullscreen.addEventListener("click", function () {
+      var action = toggleFullscreen();
+      if (action && action.catch) action.catch(function () {});
+    });
+    document.addEventListener("fullscreenchange", syncFullscreenButton);
+    document.addEventListener("webkitfullscreenchange", syncFullscreenButton);
+    syncFullscreenButton();
+  }
 
   /* ---------- Audio warm-up on first user gesture (autoplay policy) ---------- */
   function warm() {

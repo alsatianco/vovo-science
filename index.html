@@ -114,6 +114,7 @@
       background: var(--sidebar-active);
       color: var(--sidebar-active-text);
     }
+    .nav-item[hidden] { display: none; }
     .nav-item.locked {
       opacity: .42;
       cursor: not-allowed;
@@ -358,6 +359,10 @@
       <button class="nav-item active" onclick="scrollToTop()">
         <span class="nav-icon">🏠</span> Home
       </button>
+      <button class="nav-item" id="fullscreen-btn" type="button" hidden>
+        <span class="nav-icon" id="fullscreen-icon">⛶</span>
+        <span id="fullscreen-label">Full screen</span>
+      </button>
 
       <span class="nav-section-label">Grades</span>
 
@@ -481,6 +486,50 @@
   <script>
     function scrollToTop() { document.getElementById('main-top').scrollTo({ top: 0, behavior: 'smooth' }); }
     function comingSoon() { alert('Coming soon! We are working on it. 🚀'); }
+
+    (function setupFullscreenButton() {
+      var btn = document.getElementById('fullscreen-btn');
+      var icon = document.getElementById('fullscreen-icon');
+      var label = document.getElementById('fullscreen-label');
+      var root = document.documentElement;
+
+      function fullscreenElement() {
+        return document.fullscreenElement || document.webkitFullscreenElement || null;
+      }
+
+      function canEnterFullscreen() {
+        if (document.fullscreenEnabled === false || document.webkitFullscreenEnabled === false) return false;
+        return !!(root.requestFullscreen || root.webkitRequestFullscreen);
+      }
+
+      function requestFullscreen() {
+        var fn = root.requestFullscreen || root.webkitRequestFullscreen;
+        if (fn) return fn.call(root);
+      }
+
+      function exitFullscreen() {
+        var fn = document.exitFullscreen || document.webkitExitFullscreen;
+        if (fn) return fn.call(document);
+      }
+
+      function syncFullscreenButton() {
+        var active = !!fullscreenElement();
+        icon.textContent = active ? '↙' : '⛶';
+        label.textContent = active ? 'Exit full screen' : 'Full screen';
+        btn.setAttribute('aria-pressed', String(active));
+        btn.setAttribute('aria-label', active ? 'Exit full screen' : 'Enter full screen');
+      }
+
+      if (!btn || !canEnterFullscreen()) return;
+      btn.hidden = false;
+      btn.addEventListener('click', function () {
+        var action = fullscreenElement() ? exitFullscreen() : requestFullscreen();
+        if (action && action.catch) action.catch(function () {});
+      });
+      document.addEventListener('fullscreenchange', syncFullscreenButton);
+      document.addEventListener('webkitfullscreenchange', syncFullscreenButton);
+      syncFullscreenButton();
+    })();
   </script>
 
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "a1a04c5c2cc846bc8817b419c4cd07aa"}'></script><!-- End Cloudflare Web Analytics --></body>

@@ -27,6 +27,7 @@
   var bar = el("div", { "class": "topbar" });
   var starWrap = el("div", { "class": "star-count" });
   var soundBtn;
+  var fullscreenBtn;
   function buildBar() {
     UI.clear(bar);
     bar.appendChild(UI.iconButton("ic-home", "Home", showHome));
@@ -45,6 +46,11 @@
     soundBtn = UI.iconButton("ic-speaker", "Sound on/off", toggleSound);
     soundBtn.classList.toggle("muted", Sound.isMuted());
     bar.appendChild(soundBtn);
+    if (canEnterFullscreen()) {
+      fullscreenBtn = UI.iconButton(fullscreenElement() ? "ic-fullscreen-exit" : "ic-fullscreen", fullscreenElement() ? "Exit full screen" : "Full screen", toggleFullscreen);
+      fullscreenBtn.setAttribute("aria-pressed", String(!!fullscreenElement()));
+      bar.appendChild(fullscreenBtn);
+    }
   }
   function toggleSound() {
     Sound.setMuted(!Sound.isMuted());
@@ -53,9 +59,43 @@
     if (!Sound.isMuted()) Sound.narrate("Sound on.");
   }
 
+  function fullscreenElement() {
+    return document.fullscreenElement || document.webkitFullscreenElement || null;
+  }
+
+  function canEnterFullscreen() {
+    if (document.fullscreenEnabled === false || document.webkitFullscreenEnabled === false) return false;
+    return !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
+  }
+
+  function syncFullscreenButton() {
+    if (!fullscreenBtn) return;
+    var active = !!fullscreenElement();
+    fullscreenBtn.setAttribute("aria-pressed", String(active));
+    fullscreenBtn.setAttribute("aria-label", active ? "Exit full screen" : "Enter full screen");
+    fullscreenBtn.setAttribute("title", active ? "Exit full screen" : "Full screen");
+    UI.clear(fullscreenBtn);
+    fullscreenBtn.appendChild(icon(active ? "ic-fullscreen-exit" : "ic-fullscreen"));
+  }
+
+  function toggleFullscreen() {
+    var root = document.documentElement;
+    var action;
+    if (fullscreenElement()) {
+      var exit = document.exitFullscreen || document.webkitExitFullscreen;
+      if (exit) action = exit.call(document);
+    } else {
+      var request = root.requestFullscreen || root.webkitRequestFullscreen;
+      if (request) action = request.call(root);
+    }
+    if (action && action.catch) action.catch(function () {});
+  }
+
   var screen = el("div", { "class": "screen" });
   app.appendChild(bar);
   app.appendChild(screen);
+  document.addEventListener("fullscreenchange", syncFullscreenButton);
+  document.addEventListener("webkitfullscreenchange", syncFullscreenButton);
 
   function setScreen(name, node) {
     // NOTE: we deliberately do NOT cancel speech here. A cancel() immediately

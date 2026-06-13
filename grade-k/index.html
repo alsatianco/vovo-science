@@ -72,6 +72,12 @@
         <path d="M10 24h10l14-12v40L20 40H10z" fill="currentColor"/>
         <path d="M44 24 58 38M58 24 44 38" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
       </symbol>
+      <symbol id="i-fullscreen" viewBox="0 0 64 64">
+        <path d="M14 26V14h12M38 14h12v12M50 38v12H38M26 50H14V38" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="i-fullscreen-exit" viewBox="0 0 64 64">
+        <path d="M26 14v12H14M50 26H38V14M38 50V38h12M14 38h12v12" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
       <symbol id="i-star" viewBox="0 0 64 64">
         <path d="M32 6l7.6 15.4 17 2.5-12.3 12 2.9 16.9L32 49.3 16.8 52.8l2.9-16.9-12.3-12 17-2.5z"
               fill="currentColor"/>
@@ -587,6 +593,9 @@
       </div>
       <button class="iconbtn" id="btn-sound" aria-label="Turn sound off" aria-pressed="true">
         <svg class="icon"><use href="#i-sound-on"></use></svg>
+      </button>
+      <button class="iconbtn" id="btn-fullscreen" aria-label="Enter full screen" aria-pressed="false" hidden>
+        <svg class="icon"><use href="#i-fullscreen"></use></svg>
       </button>
     </header>
 
