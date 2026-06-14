@@ -187,33 +187,71 @@
     var phrases = splitPhrases(item.text);
     if (!phrases.length) return;
     var totalWords = phrases.reduce(function (a, p) { return a + p.words; }, 0) || 1;
-    var scheduled = false;
 
-    function fireAll() {
+    // Phrase-start offsets (seconds, anchored to audio start). Computed once
+    // we have a duration. Highlights fire when audio.currentTime crosses each
+    // offset — NOT on a wall-clock setTimeout. This keeps karaoke locked to
+    // real playback, so cached audio with a delayed `playing` event (the
+    // refresh / nav-between-lessons case) cannot desync the highlights.
+    var offsets = null;
+    var nextIdx = 0;
+    var rafId = null;
+    var stopped = false;
+
+    function computeOffsets() {
+      if (offsets) return;
       var dur = (isFinite(audio.duration) && audio.duration > 0)
         ? audio.duration
         : Math.max(1.0, totalWords * 0.40);
       var speech = Math.max(0.4, dur - HI_LEAD_SILENCE - HI_TAIL_SILENCE);
+      var arr = [];
       var t = HI_LEAD_SILENCE;
       phrases.forEach(function (p) {
-        var ms = Math.max(0, t * 1000);
-        hiTimers.push(setTimeout(function () {
-          item.onWord(p.startChar, p.endChar);
-        }, ms));
+        arr.push(t);
         t += speech * (p.words / totalWords);
       });
+      offsets = arr;
     }
 
-    function schedule() {
-      if (scheduled) return;
-      scheduled = true;
-      fireAll();
+    function tick() {
+      rafId = null;
+      if (stopped) return;
+      if (!offsets) computeOffsets();
+      var ct = audio.currentTime || 0;
+      while (nextIdx < phrases.length && ct >= offsets[nextIdx]) {
+        var p = phrases[nextIdx++];
+        try { item.onWord(p.startChar, p.endChar); } catch (e) {}
+      }
+      if (nextIdx < phrases.length && !stopped) {
+        rafId = requestAnimationFrame(tick);
+      }
     }
 
-    audio.addEventListener("loadedmetadata", schedule, { once: true });
-    audio.addEventListener("playing", schedule, { once: true });
-    // Safety net if neither event fires promptly (cached audio, Safari quirks).
-    hiTimers.push(setTimeout(schedule, 600));
+    function startTick() {
+      if (rafId != null || stopped) return;
+      computeOffsets();
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function onLoadedMeta() { computeOffsets(); }
+    // Begin the rAF loop only after audio has actually started playing
+    // (or we observe currentTime advancing). This is the key fix vs. the
+    // old behaviour of starting a setTimeout chain on `loadedmetadata`,
+    // which fires far too early for cached audio.
+    function onPlaying() { startTick(); }
+    function onTimeUpdate() { if ((audio.currentTime || 0) > 0) startTick(); }
+
+    audio.addEventListener("loadedmetadata", onLoadedMeta);
+    audio.addEventListener("playing", onPlaying);
+    audio.addEventListener("timeupdate", onTimeUpdate);
+
+    hiCleanups.push(function () {
+      stopped = true;
+      if (rafId != null) { try { cancelAnimationFrame(rafId); } catch (e) {} rafId = null; }
+      audio.removeEventListener("loadedmetadata", onLoadedMeta);
+      audio.removeEventListener("playing", onPlaying);
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+    });
   }
 
   function doSpeakFile(item, src) {
