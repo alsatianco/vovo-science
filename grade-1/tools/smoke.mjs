@@ -72,7 +72,8 @@ const document = {
   getElementById: id => (id === "app" ? appEl : null),
   querySelector: () => null,
   body: new Element("body"),
-  documentElement: new Element("html")
+  documentElement: new Element("html"),
+  addEventListener: () => {}, removeEventListener: () => {}
 };
 const win = {};
 const ctx = {
@@ -129,7 +130,7 @@ try {
   const bar = appEl.childNodes[0], screen = appEl.childNodes[1];
   if (!bar || !screen) throw new Error("app did not build bar+screen");
   const biCards = screen.querySelectorAll(".bi-card");
-  if (biCards.length !== 6) { fail = true; console.log(`✗ home: expected 6 Big-Idea cards, got ${biCards.length}`); }
+  if (biCards.length !== 7) { fail = true; console.log(`✗ home: expected 7 Big-Idea cards, got ${biCards.length}`); }
   let drives = 0;
   for (let i = 0; i < biCards.length; i++) {
     bar.querySelector(".icon-btn").click();          // Home -> Big-Idea picker

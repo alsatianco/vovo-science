@@ -1231,6 +1231,46 @@
   <path d="M44 16 V50 M52 16 V50 M44 28 H52 M44 40 H52" stroke="#9C6B3F" stroke-width="3" stroke-linecap="round" fill="none"/>
   <path d="M48 16 Q26 24 28 50 L36 50 Q34 30 52 22 Z" fill="#7CC5D6" stroke="#4A3B2A" stroke-width="3" stroke-linejoin="round"/>
 </symbol>
+  <!-- ===== Big Idea 7 "Animal Groups": new creatures (storybook style) ===== -->
+  <symbol id="ic-shark" viewBox="0 0 64 64">
+    <ellipse cx="30" cy="34" rx="23" ry="11" fill="#9AA7AD" stroke="#4A3B2A" stroke-width="3"/>
+    <path d="M52 34 L63 26 L61 44 Z" fill="#7E8C92" stroke="#4A3B2A" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M26 23 L33 9 L41 24 Z" fill="#7E8C92" stroke="#4A3B2A" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M20 43 L24 53 L32 46 Z" fill="#7E8C92" stroke="#4A3B2A" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="14" cy="31" r="2.4" fill="#4A3B2A"/>
+    <path d="M7 37 Q14 40 21 37" stroke="#4A3B2A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-bee" viewBox="0 0 64 64">
+    <ellipse cx="30" cy="38" rx="17" ry="12" fill="#E0A458" stroke="#4A3B2A" stroke-width="3"/>
+    <path d="M25 28 Q23 38 26 49 M35 27 Q33 38 35 50 M44 30 Q43 38 44 47" stroke="#4A3B2A" stroke-width="3.5" fill="none"/>
+    <path d="M46 33 L57 28 L55 39 Z" fill="#E0A458" stroke="#4A3B2A" stroke-width="2" stroke-linejoin="round"/>
+    <ellipse cx="24" cy="22" rx="10" ry="6" fill="#F4ECE0" stroke="#4A3B2A" stroke-width="2" transform="rotate(-18 24 22)"/>
+    <circle cx="15" cy="37" r="2.4" fill="#4A3B2A"/>
+    <path d="M12 30 L8 22 M17 29 L16 20" stroke="#4A3B2A" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-ant" viewBox="0 0 64 64">
+    <ellipse cx="48" cy="34" rx="11" ry="9" fill="#8B5E3C" stroke="#4A3B2A" stroke-width="3"/>
+    <circle cx="32" cy="34" r="7" fill="#8B5E3C" stroke="#4A3B2A" stroke-width="3"/>
+    <circle cx="17" cy="32" r="8" fill="#8B5E3C" stroke="#4A3B2A" stroke-width="3"/>
+    <circle cx="14" cy="30" r="2" fill="#4A3B2A"/>
+    <path d="M12 25 L7 17 M18 24 L16 15" stroke="#4A3B2A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M28 38 L24 50 M34 40 L32 52 M40 39 L44 51 M26 30 L20 22 M40 31 L46 24" stroke="#4A3B2A" stroke-width="2.5" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-lizard" viewBox="0 0 64 64">
+    <path d="M8 44 Q22 40 30 40" fill="none" stroke="#6BA292" stroke-width="7" stroke-linecap="round"/>
+    <ellipse cx="38" cy="36" rx="12" ry="8" fill="#6BA292" stroke="#4A3B2A" stroke-width="3"/>
+    <circle cx="52" cy="31" r="6" fill="#6BA292" stroke="#4A3B2A" stroke-width="3"/>
+    <circle cx="54" cy="30" r="1.6" fill="#4A3B2A"/>
+    <path d="M32 42 L28 51 M42 42 L46 51 M34 30 L30 22 M44 30 L48 23" stroke="#4A3B2A" stroke-width="2.5" stroke-linecap="round"/>
+    <g fill="#9DC3B6"><circle cx="36" cy="34" r="1.8"/><circle cx="42" cy="37" r="1.8"/></g>
+  </symbol>
+  <symbol id="ic-paw" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="42" rx="13" ry="11" fill="#B07A43" stroke="#4A3B2A" stroke-width="3"/>
+    <ellipse cx="16" cy="30" rx="6" ry="7" fill="#B07A43" stroke="#4A3B2A" stroke-width="3"/>
+    <ellipse cx="27" cy="22" rx="6" ry="7" fill="#B07A43" stroke="#4A3B2A" stroke-width="3"/>
+    <ellipse cx="38" cy="22" rx="6" ry="7" fill="#B07A43" stroke="#4A3B2A" stroke-width="3"/>
+    <ellipse cx="48" cy="30" rx="6" ry="7" fill="#B07A43" stroke="#4A3B2A" stroke-width="3"/>
+  </symbol>
 </svg>
 
 <div id="app"></div>
@@ -1238,16 +1278,17 @@
 <!-- classic <script> tags only (no ES modules / fetch under file://) -->
 <script src="../assets/audio/tts/manifest.js?v=20260614"></script>
 <script src="js/audio.js?v=14"></script>
-<script src="js/data.js?v=9"></script>
-<script src="js/data-monkey.js?v=9"></script>
-<script src="js/data-bi1.js?v=9"></script>
-<script src="js/data-bi2.js?v=9"></script>
-<script src="js/data-bi3.js?v=9"></script>
-<script src="js/data-bi4.js?v=9"></script>
-<script src="js/data-bi5.js?v=9"></script>
-<script src="js/data-bi6.js?v=9"></script>
+<script src="js/data.js?v=10"></script>
+<script src="js/data-monkey.js?v=10"></script>
+<script src="js/data-bi1.js?v=10"></script>
+<script src="js/data-bi2.js?v=10"></script>
+<script src="js/data-bi3.js?v=10"></script>
+<script src="js/data-bi4.js?v=10"></script>
+<script src="js/data-bi5.js?v=10"></script>
+<script src="js/data-bi6.js?v=10"></script>
+<script src="js/data-bi7.js?v=10"></script>
 <script src="js/ui.js?v=9"></script>
 <script src="js/engines.js?v=9"></script>
-<script src="js/app.js?v=10"></script>
+<script src="js/app.js?v=11"></script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "a1a04c5c2cc846bc8817b419c4cd07aa"}'></script><!-- End Cloudflare Web Analytics --></body>
 </html>

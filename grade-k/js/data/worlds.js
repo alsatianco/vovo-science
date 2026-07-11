@@ -22,7 +22,8 @@
         { id: "animals",        name: "Animal Friends",       icon: "#u-animals" },
         { id: "traits",         name: "Look Like Family",     icon: "#u-traits" },
         { id: "livingNonliving",name: "Alive or Not?",        icon: "#u-living" },
-        { id: "lifeCycle",      name: "Sprout to Fruit",      icon: "#u-lifecycle" }
+        { id: "lifeCycle",      name: "Sprout to Fruit",      icon: "#u-lifecycle" },
+        { id: "animalGroups",   name: "Animal Groups",        icon: "#u-groups" }
       ]
     },
     {

@@ -139,7 +139,8 @@
     { id: 3, title: "The sun, moon, and stars in our sky",  color: "#3B5BA5", icon: "ic-sun" },
     { id: 4, title: "Different seasons have different weather", color: "#E08A4A", icon: "ic-leaf" },
     { id: 5, title: "Objects can be solid, liquid, or gas", color: "#4F9DAE", icon: "ic-water" },
-    { id: 6, title: "Motion can be changed by force",       color: "#8E5BA6", icon: "ic-ball" }
+    { id: 6, title: "Motion can be changed by force",       color: "#8E5BA6", icon: "ic-ball" },
+    { id: 7, title: "Animals can be sorted into groups",    color: "#B85C8A", icon: "ic-paw" }
   ];
 
   function showHome() {
