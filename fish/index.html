@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Do Fish Drink Water? — A Fishy Science Game</title>
+<style>
+/* ============================================================
+   DO FISH DRINK WATER?  —  vintage undersea nature-study booklet
+   Self-contained game for age 6.  English + tap-to-hear audio.
+   Palette is FUNCTIONAL:  teal = SALT water,  mint = FRESH water.
+   ============================================================ */
+
+:root{
+  --paper:#f4e8ce;        /* aged booklet paper            */
+  --paper-2:#efdfbe;      /* deeper paper (shadows/edges)  */
+  --ink:#22404a;          /* printed ink (text/outlines)   */
+  --ink-soft:#4d6b73;     /* softer ink (captions)         */
+  --teal:#2e8f86;         /* SALT water                    */
+  --teal-d:#1f6b64;
+  --mint:#a8d5c6;         /* FRESH water                   */
+  --mint-d:#7bbaa9;
+  --coral:#ee7355;        /* fish / warmth / accent        */
+  --coral-d:#d1573b;
+  --gold:#e9af39;         /* stars / rewards / sun         */
+  --gold-d:#c9902a;
+  --deep:#164a5a;         /* deep-ocean scene background   */
+  --cream-line:#e2cfa5;   /* hairline on paper             */
+
+  --shadow:0 10px 24px rgba(22,64,74,.20);
+  --shadow-sm:0 4px 10px rgba(22,64,74,.16);
+
+  --font-display:'Chalkboard SE','Bradley Hand','Comic Sans MS',ui-rounded,cursive;
+  --font-body:ui-rounded,'SF Pro Rounded','Varela Round','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:var(--font-body);
+  color:var(--ink);
+  /* the "desk": an underwater backdrop the booklet page floats on */
+  background:
+    linear-gradient(180deg,#5aa9d8 0%,#3d86c0 24%,#276ba6 50%,#175a92 76%,#0f4272 100%);
+  min-height:100dvh;
+  display:flex;align-items:center;justify-content:center;
+  padding:14px;
+  overflow-x:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:none;color:inherit;background:none}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:10px}
+
+/* soft rising bubbles in the backdrop (ambient) */
+.sea-bubbles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.sea-bubbles i{
+  position:absolute;bottom:-40px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.5), rgba(255,255,255,.06) 60%, transparent 70%);
+  border:1px solid rgba(255,255,255,.18);
+  animation:rise linear infinite;
+}
+@keyframes rise{to{transform:translateY(-115dvh) translateX(24px);opacity:0}}
+
+/* underwater reef backdrop — a seabed of kelp, coral, starfish & shells framing the page */
+.reef{position:fixed;left:0;right:0;bottom:0;z-index:0;pointer-events:none;line-height:0}
+.reef svg{width:100%;height:auto;display:block;filter:drop-shadow(0 -2px 6px rgba(6,28,52,.15))}
+
+/* ---------- the booklet page ---------- */
+.book{
+  position:relative;z-index:1;
+  width:min(880px,97%);
+  min-height:min(94dvh,940px);
+  background:var(--paper);
+  border-radius:26px;
+  box-shadow:0 22px 55px rgba(6,28,52,.42), var(--shadow), inset 0 0 0 2px #fff8;
+  padding:18px clamp(16px,4vw,30px) 20px;
+  display:flex;flex-direction:column;
+  /* printed spot-ink border frame drawn with layered gradients */
+  outline:3px solid var(--ink);
+  outline-offset:-12px;
+}
+/* paper grain + gentle vignette on the page */
+.book::before{
+  content:"";position:absolute;inset:0;border-radius:26px;pointer-events:none;
+  background:
+    radial-gradient(130% 120% at 50% 0%, transparent 60%, rgba(22,64,74,.07) 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='0.05'/></svg>");
+  mix-blend-mode:multiply;
+}
+/* little printed corner shells on the frame */
+.corner{position:absolute;font-size:20px;opacity:.55;z-index:2}
+.corner.tl{top:16px;left:18px}.corner.tr{top:16px;right:18px}
+.corner.bl{bottom:16px;left:18px}.corner.br{bottom:16px;right:18px}
+
+/* ---------- header ---------- */
+.head{display:flex;align-items:center;gap:12px;position:relative;z-index:3}
+.head .finn{width:54px;height:44px;flex:none}
+.head .titlebox{flex:1;min-width:0}
+.head .kicker{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal-d);font-weight:700}
+.head h1{font-family:var(--font-display);font-size:clamp(20px,4.8vw,26px);line-height:1.02;color:var(--ink);margin-top:2px}
+.audio-btns{display:flex;gap:8px;flex:none}
+.iconbtn{
+  width:42px;height:42px;border-radius:50%;background:var(--paper-2);
+  border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;
+  font-size:19px;box-shadow:var(--shadow-sm);transition:transform .12s}
+.iconbtn:active{transform:scale(.9)}
+.iconbtn.on{background:var(--gold);}
+
+/* progress: a shell tray that fills as you learn */
+.tray{display:flex;align-items:center;gap:8px;margin:12px 0 6px;position:relative;z-index:3}
+.tray[hidden]{display:none}   /* [hidden] alone loses to display:flex — this restores the intent */
+.tray .lab{font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);font-weight:700}
+.tray .slots{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+.slot{width:21px;height:21px;border-radius:50%;border:2px dashed var(--cream-line);
+  display:flex;align-items:center;justify-content:center;font-size:13px;transition:transform .3s}
+.slot.filled{border-style:solid;border-color:transparent;transform:scale(1.12);animation:shellpop .5s cubic-bezier(.3,1.5,.5,1)}
+@keyframes shellpop{0%{transform:scale(.2) rotate(-25deg)}60%{transform:scale(1.35) rotate(8deg)}100%{transform:scale(1.12) rotate(0)}}
+
+/* ---------- screens ---------- */
+.stage{flex:1;position:relative;z-index:3;display:flex;flex-direction:column;margin-top:6px}
+.screen{display:none;flex:1;flex-direction:column}
+.screen.on{display:flex;animation:pagein .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes pagein{from{opacity:0;transform:translateY(14px) rotate(-.4deg)}to{opacity:1;transform:none}}
+
+/* professor speech bubble / question card */
+.say{
+  background:#fffdf6;border:2.5px solid var(--ink);border-radius:20px;
+  padding:16px 18px;position:relative;box-shadow:var(--shadow-sm);
+  display:flex;gap:12px;align-items:center}
+.say::after{content:"";position:absolute;left:34px;bottom:-13px;width:22px;height:22px;
+  background:#fffdf6;border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);
+  transform:rotate(45deg)}
+.say .finn{width:52px;height:44px;flex:none}
+.say .q{font-family:var(--font-display);font-size:clamp(24px,5.6vw,32px);line-height:1.32;color:var(--ink)}
+.say .q b{color:var(--coral-d)}
+.hearline{display:flex;justify-content:flex-end;margin-top:6px}
+.hear{display:inline-flex;align-items:center;gap:6px;font-size:16px;font-weight:700;color:var(--teal-d);
+  background:rgba(46,143,134,.14);border:2px solid rgba(46,143,134,.45);border-radius:20px;padding:8px 15px}
+.hear:active{transform:scale(.95)}
+
+/* ---------- START screen ---------- */
+#s-start{align-items:center;text-align:center;justify-content:center}
+#s-start .bigfinn{width:min(200px,62%);height:auto;margin:4px auto 2px;animation:bob 3.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-10px) rotate(1.5deg)}}
+#s-start h2{font-family:var(--font-display);font-size:clamp(30px,9vw,46px);line-height:1.05;color:var(--ink);margin-top:4px}
+#s-start .tag{color:var(--ink-soft);font-size:18px;margin:10px auto 0;max-width:28ch;line-height:1.45}
+.play{
+  margin-top:20px;font-family:var(--font-display);font-size:27px;color:#fff;
+  background:linear-gradient(180deg,var(--coral),var(--coral-d));
+  border:3px solid var(--ink);border-radius:22px;padding:15px 40px;
+  box-shadow:0 8px 0 var(--coral-d), var(--shadow);transition:transform .1s,box-shadow .1s}
+.play:active{transform:translateY(5px);box-shadow:0 3px 0 var(--coral-d),var(--shadow-sm)}
+.grown{margin-top:18px}
+.grown summary{list-style:none;cursor:pointer;font-size:14.5px;color:var(--ink-soft);
+  border:1.5px dashed var(--cream-line);border-radius:20px;padding:7px 16px;display:inline-block}
+.grown summary::-webkit-details-marker{display:none}
+.grown[open] summary{margin-bottom:8px}
+.grown .note{font-size:15px;line-height:1.55;color:var(--ink);text-align:left;background:var(--paper-2);
+  border:1.5px solid var(--cream-line);border-radius:14px;padding:12px 14px;max-width:44ch;margin:0 auto}
+.grown .note b{color:var(--teal-d)}
+
+/* ---------- generic level heading ---------- */
+.level-tag{font-family:var(--font-display);font-size:17.5px;color:var(--gold-d);letter-spacing:1px;
+  display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.level-tag::before{content:"";width:22px;height:3px;background:var(--gold);border-radius:3px}
+/* the balloon screen's heading: short, big, bold red */
+.level-tag.secret{font-size:clamp(23px,5.4vw,30px);color:var(--coral-d);font-weight:700;letter-spacing:.5px}
+.level-tag.secret::before{background:var(--coral);width:26px;height:4px}
+
+/* ---------- LEARN : Two kinds of water ---------- */
+.learn-panels{display:flex;flex-direction:column;gap:16px;flex:1;margin:10px 0}
+/* the two panels grow to fill the whole area — no big empty cream band */
+.lp{flex:1;display:flex;gap:22px;align-items:center;text-align:left;border:3px solid var(--ink);border-radius:20px;
+  padding:16px 24px;box-shadow:var(--shadow-sm);transition:transform .12s;width:100%;min-height:140px}
+.lp:active{transform:scale(.98)}
+.lp.salt{background:rgba(46,143,134,.18)}
+.lp.fresh{background:rgba(168,213,198,.4)}
+.lp.buzz{animation:pop .5s}
+.lp-art{height:82%;max-height:210px;aspect-ratio:16/10;width:auto;max-width:46%;border-radius:14px;overflow:hidden;flex:none;
+  border:2.5px solid var(--ink);box-shadow:0 3px 6px rgba(22,64,74,.18)}
+.lp-art svg{width:100%;height:100%;display:block}
+.lp-body{display:flex;flex-direction:column;gap:8px}
+.lp-title{font-family:var(--font-display);font-size:clamp(28px,4.4vw,38px);color:var(--ink)}
+.lp-fact{font-size:clamp(20px,3vw,26px);line-height:1.35;color:var(--ink)}
+.lp-tap{font-size:18px;color:var(--teal-d);font-weight:700}
+
+/* ---------- LEVEL 1 : Salty or Not? (yes/no) ---------- */
+.scene{
+  background:linear-gradient(180deg,#eaf6f2,#d6ede6);
+  border:2.5px solid var(--ink);border-radius:20px;
+  flex:1;min-height:min(35dvh,220px);margin:12px 0;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center}
+.scene .art{position:absolute;inset:0}
+.scene .art svg{width:100%;height:100%;display:block}
+.scene .name{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);text-align:center;
+  font-family:var(--font-display);font-size:23px;color:var(--ink);white-space:nowrap;
+  background:rgba(244,232,206,.92);border:2px solid var(--ink);border-radius:20px;padding:2px 16px;box-shadow:var(--shadow-sm)}
+.scene.salt{background:linear-gradient(180deg,#bfe6df,#8ecabf)}
+.scene.fresh{background:linear-gradient(180deg,#e9f5ef,#c7e7db)}
+.yesno{display:flex;gap:14px;margin-top:auto}
+.big-choice{
+  flex:1;font-family:var(--font-display);font-size:31px;border:3px solid var(--ink);
+  border-radius:22px;padding:24px 12px;box-shadow:0 6px 0 rgba(22,64,74,.25);
+  display:flex;flex-direction:column;align-items:center;gap:6px;transition:transform .1s,box-shadow .1s}
+.big-choice .em{font-size:48px}
+.big-choice:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(22,64,74,.25)}
+.big-choice.yes{background:var(--mint)}
+.big-choice.no{background:#f3d9c9}
+.big-choice.right{background:var(--gold)!important;animation:pop .4s}
+.big-choice.wrong{animation:shake .4s}
+.big-choice:disabled{cursor:default}
+
+/* ---------- LEVEL 2 : Sort the Water (drag / tap) ---------- */
+.sort-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0;flex:1;align-content:center}
+.wcard{
+  background:#fffdf6;border:3px solid var(--ink);border-radius:16px;padding:9px 9px 7px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  box-shadow:var(--shadow-sm);touch-action:none;user-select:none;transition:box-shadow .15s;
+  position:relative}
+.wcard .thumb{width:100%;aspect-ratio:16/10;border-radius:10px;overflow:hidden;border:2.5px solid var(--ink);
+  display:block;pointer-events:none;box-shadow:0 2px 4px rgba(22,64,74,.15)}
+.wcard .thumb svg{width:100%;height:100%;display:block;pointer-events:none}
+.wcard .nm{font-size:20px;font-weight:700;color:var(--ink);pointer-events:none}
+.wcard.picked{box-shadow:0 0 0 4px var(--gold), var(--shadow);z-index:60}
+.wcard.dragging{z-index:80;box-shadow:0 14px 26px rgba(22,64,74,.35)}
+.wcard.gone{animation:vanish .3s forwards}
+@keyframes vanish{to{transform:scale(.2);opacity:0}}
+.buckets{display:flex;gap:14px;margin-top:10px}
+.bucket{
+  flex:1;border:3px dashed var(--ink);border-radius:18px;min-height:150px;padding:12px 10px 10px;
+  display:flex;flex-direction:column;align-items:center;transition:transform .12s,background .15s}
+.bucket .bkicon{font-size:56px;line-height:1;margin-bottom:2px;filter:drop-shadow(0 2px 3px rgba(22,64,74,.22))}
+.bucket .cap{font-family:var(--font-display);font-size:26px;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.bucket .drop{font-size:16px;color:var(--ink-soft);font-weight:700}
+.bucket .caught{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:8px}
+.bucket .caught .mini{display:inline-block;width:54px;height:34px;border-radius:8px;overflow:hidden;
+  border:2px solid var(--ink);vertical-align:middle;box-shadow:0 2px 4px rgba(22,64,74,.15)}
+.bucket .caught .mini svg{width:100%;height:100%;display:block}
+/* new games: fish cards + fish chips */
+#thFish{grid-template-columns:repeat(2,1fr)}
+.wcard .cardfish{width:100%;pointer-events:none}
+.wcard .cardfish svg{width:100%;height:auto;display:block;pointer-events:none}
+.bucket .caught .mini-fish{width:56px;height:auto;border:none;box-shadow:none;overflow:visible;display:inline-block}
+.bucket .caught .mini-fish svg{width:100%;height:auto;display:block}
+.bucket.salt{background:rgba(46,143,134,.20);border-color:var(--teal-d)}
+.bucket.fresh{background:rgba(168,213,198,.42);border-color:var(--mint-d)}
+.bucket.hot{transform:scale(1.04);border-style:solid;background:var(--gold)}
+
+/* ---------- LEVEL 4 : The Fish Secret (osmosis showpiece) ---------- */
+.secret-tabs{display:flex;gap:8px;margin:10px 0}
+.secret-tabs button{
+  flex:1;font-family:var(--font-display);font-size:17.5px;padding:12px 6px;border:2.5px solid var(--ink);
+  border-radius:14px;background:#fffdf6;transition:transform .1s}
+.secret-tabs button.on.ocean{background:var(--teal);color:#fff}
+.secret-tabs button.on.river{background:var(--mint)}
+.secret-tabs button:active{transform:scale(.96)}
+.tank{
+  position:relative;border:3px solid var(--ink);border-radius:20px;overflow:hidden;
+  flex:1;min-height:min(40dvh,240px);margin-bottom:10px;transition:background .5s}
+.tank.ocean{background:linear-gradient(180deg,#3aa79c,#1f6b64)}
+.tank.river{background:linear-gradient(180deg,#bfe6da,#7bbaa9)}
+.tank .label-salt,.tank .label-fresh{position:absolute;top:8px;left:10px;font-family:var(--font-display);
+  font-size:15px;padding:4px 12px;border-radius:20px;border:2px solid var(--ink)}
+.tank.ocean .label-salt{display:block;background:rgba(255,255,255,.85);color:var(--teal-d)}
+.tank.ocean .label-fresh,.tank.river .label-salt{display:none}
+.tank.river .label-fresh{display:block;background:rgba(255,255,255,.85);color:var(--teal-d)}
+/* the membrane fish sits center */
+.tank .membrane{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(66%,400px);height:auto}
+/* water particles */
+.wp{position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,rgba(255,255,255,.35) 65%,transparent);
+  border:1px solid rgba(255,255,255,.6)}
+.tank.ocean .wp{animation:outflow 2.4s ease-in infinite}
+.tank.river .wp{animation:inflow 2.4s ease-out infinite}
+@keyframes outflow{0%{transform:translate(0,0) scale(.7);opacity:0}
+  20%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1);opacity:0}}
+@keyframes inflow{0%{transform:translate(var(--dx),var(--dy)) scale(1);opacity:0}
+  25%{opacity:1}100%{transform:translate(0,0) scale(.6);opacity:0}}
+/* drink / pee / salt streams (the animated "video") */
+.tank .stream{position:absolute;width:13px;height:13px;border-radius:50%;pointer-events:none;
+  border:1px solid rgba(255,255,255,.55);z-index:3;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.anim-cap{position:absolute;top:8px;right:10px;background:#fffdf6;border:2px solid var(--ink);
+  border-radius:14px;padding:4px 11px;font-family:var(--font-display);font-size:14px;z-index:4;box-shadow:var(--shadow-sm)}
+/* the drink / pee badge */
+.act-badge{position:absolute;bottom:10px;right:12px;background:#fffdf6;border:2.5px solid var(--ink);
+  border-radius:16px;padding:7px 14px;font-family:var(--font-display);font-size:19px;display:flex;
+  align-items:center;gap:6px;box-shadow:var(--shadow-sm);animation:pop .5s}
+.secret-cap{background:var(--paper-2);border:1.5px solid var(--cream-line);border-radius:14px;
+  padding:14px 16px;font-size:18px;line-height:1.5;color:var(--ink)}
+.secret-cap b{color:var(--coral-d)}
+.secret-next{margin-top:auto}
+
+/* ---------- LEVEL 5 : Drink or Pee? (click-select) ---------- */
+.fish-stage{background:linear-gradient(180deg,#e9f5f1,#cfe9e0);border:2.5px solid var(--ink);
+  border-radius:20px;flex:1;min-height:min(44dvh,360px);margin:12px 0;display:flex;align-items:center;
+  justify-content:center;position:relative;overflow:hidden}
+.fish-stage .home{position:absolute;inset:0}
+.fish-stage .home svg{width:100%;height:100%;display:block}
+/* only the tagged swimmer moves — the underwater backdrop stays put */
+.fish-stage .swimmer{position:relative;display:block}
+.fish-stage .swimmer svg{width:100%;height:auto;display:block;animation:swim 3s ease-in-out infinite}
+@keyframes swim{0%,100%{transform:translateX(-8px) rotate(-2deg)}50%{transform:translateX(8px) rotate(2deg)}}
+/* balloon fish resizes with a springy pop as water flows in/out */
+.balloon-body{width:clamp(240px,50vw,400px);transition:transform .6s cubic-bezier(.3,1.4,.5,1);transform-origin:center}
+/* the water-direction arrow that pops in the tank while explaining osmosis */
+.water-arrow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.4);
+  font-size:34px;opacity:0;transition:transform .4s cubic-bezier(.3,1.4,.5,1),opacity .3s;pointer-events:none;z-index:4;
+  filter:drop-shadow(0 2px 3px rgba(22,64,74,.3))}
+.water-arrow.show{opacity:.92}
+.water-arrow.show.out{transform:translate(-118%,-50%) scale(1)}
+.water-arrow.show.in{transform:translate(18%,-50%) scale(1)}
+/* osmosis droplets streaming out of / into the fish (the "water moves" animation) */
+.flowdrop{position:absolute;left:0;top:0;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#ffffff,#8fd6e8 70%,rgba(143,214,232,.2));
+  border:1px solid rgba(255,255,255,.75);box-shadow:0 1px 2px rgba(22,64,74,.18);pointer-events:none;z-index:3}
+.flowdrop.warm{background:radial-gradient(circle at 35% 30%,#ffffff,#ffd98a 70%,rgba(255,217,138,.2))}
+.fish-stage .tag2{position:absolute;bottom:8px;left:8px;right:8px;text-align:center;
+  font-family:var(--font-display);font-size:21px;line-height:1.28;color:var(--ink);
+  background:rgba(255,253,246,.86);border:2px solid var(--ink);border-radius:14px;padding:4px 10px;
+  box-shadow:var(--shadow-sm)}
+.fish-stage .tag2 b{color:var(--coral-d)}
+.dp{display:flex;gap:14px;margin-top:auto}
+/* ---------- action games: tummy meter (drink) + pop bubbles (pee) ---------- */
+.meter{position:absolute;top:12px;right:12px;width:44px;height:clamp(150px,38vh,220px);
+  border:3px solid var(--ink);border-radius:20px;background:rgba(255,253,246,.9);overflow:hidden;z-index:4;box-shadow:var(--shadow-sm)}
+.meter i{position:absolute;left:0;right:0;bottom:0;display:block;height:0;
+  background:linear-gradient(180deg,#6cc2de,#2f86a8);transition:height .28s ease}
+.meter .meter-lab{position:absolute;top:5px;left:0;right:0;text-align:center;font-size:16px;z-index:1}
+.meter.full i{background:linear-gradient(180deg,#8fe0a0,#3fae5f)}
+.count-badge{position:absolute;top:12px;left:12px;background:#fffdf6;border:2.5px solid var(--ink);
+  border-radius:14px;padding:6px 14px;font-family:var(--font-display);font-size:22px;z-index:5;box-shadow:var(--shadow-sm)}
+.pop{position:absolute;z-index:6;font-size:36px;line-height:1;background:none;padding:2px;
+  filter:drop-shadow(0 2px 3px rgba(22,64,74,.28));animation:bobbud 1.7s ease-in-out infinite;touch-action:manipulation}
+@keyframes bobbud{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-7px) scale(1.06)}}
+.pop.gone{animation:vanish .3s forwards}
+.big-tap{font-size:27px}
+/* "tap the fish" invitation for the pee game */
+.pee-hint{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);font-size:42px;z-index:6;
+  pointer-events:none;filter:drop-shadow(0 2px 3px rgba(22,64,74,.3));animation:tapbob 1.1s ease-in-out infinite}
+@keyframes tapbob{0%,100%{transform:translate(-50%,-50%) translateY(2px)}50%{transform:translate(-50%,-50%) translateY(-8px)}}
+.fish-stage.tappable{cursor:pointer}
+/* ---------- game ① Follow the salt: crystals + count badges ---------- */
+.salt-cloud{position:absolute;inset:0;z-index:2;pointer-events:none}
+.grain{display:inline-block;width:13px;height:13px;margin:0 1.5px;border-radius:3px;background:#ffffff;
+  border:1.5px solid #9fb0b3;transform:rotate(45deg);box-shadow:0 1px 2px rgba(22,64,74,.28)}
+.salt-cloud .grain{position:absolute;animation:bobbud 2.2s ease-in-out infinite}
+/* grains sitting inside the fish get a soft glow so they read as "in the fish" */
+.salt-cloud .grain.in{background:#fffef2;border-color:#e6cf7a;box-shadow:0 0 0 3px rgba(255,239,150,.5),0 1px 2px rgba(22,64,74,.28)}
+/* a dashed ring hugging the fish that says "this is the inside" */
+.salt-inside-ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);
+  width:min(52%,220px);height:min(58%,150px);border:2.5px dashed rgba(255,239,150,.85);border-radius:50%;z-index:2;pointer-events:none}
+.count-badge.salt-in{right:auto;left:12px;background:#fffdf6;cursor:pointer;transition:transform .1s,box-shadow .15s}
+.count-badge.salt-out{left:auto;right:12px;background:#eaf6f9;cursor:pointer;transition:transform .1s,box-shadow .15s}
+.count-badge.salt-in:active,.count-badge.salt-out:active{transform:scale(.94)}
+.count-badge.chosen{background:var(--gold)!important;box-shadow:0 0 0 4px var(--gold),var(--shadow-sm)}
+.count-badge.miss{animation:shake .4s}
+.count-badge .grains{display:inline-flex;flex-wrap:wrap;max-width:130px;vertical-align:middle;gap:1px}
+.count-badge .grains:empty::after{content:"none";font-size:14px;color:var(--ink-soft);font-family:var(--font-body)}
+/* ---------- game ③ Keep just right: comfort meter with a green zone ---------- */
+.comfort{position:absolute;top:12px;right:12px;width:50px;height:clamp(160px,40vh,240px);
+  border:3px solid var(--ink);border-radius:22px;overflow:hidden;background:rgba(255,253,246,.92);z-index:4;box-shadow:var(--shadow-sm)}
+.comfort .fill{position:absolute;left:0;right:0;bottom:0;height:0;z-index:1;
+  background:linear-gradient(180deg,#6cc2de,#2f86a8);transition:height .12s linear}
+.comfort.good .fill{background:linear-gradient(180deg,#8fe0a0,#3fae5f)}
+.comfort .zone{position:absolute;left:0;right:0;bottom:38%;height:30%;z-index:2;
+  background:repeating-linear-gradient(45deg,rgba(47,143,74,.30),rgba(47,143,74,.30) 6px,rgba(47,143,74,.14) 6px,rgba(47,143,74,.14) 12px);
+  border-top:2px dashed #2f8f4a;border-bottom:2px dashed #2f8f4a}
+.big-choice.hintpulse{animation:hintpulse 1s ease-in-out infinite}
+@keyframes hintpulse{0%,100%{box-shadow:0 6px 0 rgba(22,64,74,.25)}
+  50%{box-shadow:0 6px 0 rgba(22,64,74,.25),0 0 0 5px var(--gold)}}
+
+/* ---------- LEVEL 6 : Match Them Up (connect) ---------- */
+.match-hint{font-size:15.5px;color:var(--ink-soft);text-align:center;margin:6px 0 4px;font-weight:700}
+.matchwrap{position:relative;flex:1;display:flex;margin-top:4px}
+.match-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.match-svg line{stroke:var(--coral);stroke-width:6;stroke-linecap:round}
+.cols{display:flex;justify-content:space-between;gap:10px;flex:1;position:relative;z-index:2}
+.col{display:flex;flex-direction:column;justify-content:space-around;gap:12px;flex:1}
+.node{
+  background:#fffdf6;border:2.5px solid var(--ink);border-radius:16px;padding:12px 8px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:var(--shadow-sm);
+  transition:transform .1s,box-shadow .15s;text-align:center}
+.node .em{font-size:54px}
+.node .nm{font-size:20px;font-weight:700;line-height:1.2}
+/* fish nodes: a big drawing (fish on its home water) filling the card */
+.node-fish{padding:8px 8px 10px;justify-content:flex-start}
+.node-art{position:relative;display:block;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;
+  border:2.5px solid var(--ink);box-shadow:0 2px 5px rgba(22,64,74,.18)}
+.node-art .ns-bg{position:absolute;inset:0}
+.node-art .ns-bg svg{width:100%;height:100%;display:block}
+.node-art .ns-fish{position:absolute;left:50%;top:50%;transform:translate(-50%,-52%);width:66%}
+.node-art .ns-fish svg{width:100%;height:auto;display:block}
+.node-fish .nm{margin-top:7px}
+.node:active{transform:scale(.97)}
+.node.sel{box-shadow:0 0 0 4px var(--gold),var(--shadow)}
+.node.done{background:var(--mint);border-color:var(--teal-d);pointer-events:none}
+.node.done::after{content:"✓";position:absolute;margin-top:-40px;margin-left:44px;color:var(--teal-d);font-weight:900}
+
+/* ---------- LEVEL 7 : Certificate / reward ---------- */
+#s-win{align-items:center;text-align:center}
+.win-finn{width:120px;height:auto;margin:2px auto;animation:cheer .7s ease-in-out infinite}
+@keyframes cheer{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg) translateY(-6px)}}
+#s-win h2{font-family:var(--font-display);font-size:clamp(27px,7.5vw,38px);color:var(--coral-d);margin-top:2px}
+.bigidea{background:var(--deep);color:#fff;border:3px solid var(--ink);border-radius:18px;
+  padding:14px 16px;margin:12px 0;font-family:var(--font-display);font-size:clamp(18px,4.8vw,23px);line-height:1.45}
+.bigidea .row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.cert{background:#fffdf6;border:3px double var(--ink);border-radius:14px;padding:16px 14px;margin:6px 0 4px;
+  box-shadow:var(--shadow)}
+.cert .seal{font-size:34px}
+.cert .ct{font-family:var(--font-display);font-size:21px;color:var(--gold-d)}
+.cert .txt{font-size:16px;color:var(--ink);margin:6px 0}
+.cert .who{font-family:var(--font-display);font-size:26px;color:var(--coral-d);border:none;
+  border-bottom:2.5px dashed var(--cream-line);text-align:center;background:transparent;width:80%;
+  padding:4px;color:var(--coral-d)}
+.cert .who:focus{outline:none;border-bottom-color:var(--gold)}
+.win-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.btn2{font-family:var(--font-display);font-size:17.5px;border:2.5px solid var(--ink);border-radius:16px;
+  padding:11px 20px;background:var(--paper-2);box-shadow:var(--shadow-sm);transition:transform .1s}
+.btn2:active{transform:scale(.96)}
+.btn2.go{background:var(--gold)}
+
+/* ---------- feedback: toast, confetti, animations ---------- */
+.toast{position:fixed;left:50%;top:22%;transform:translateX(-50%) scale(.6);z-index:200;
+  background:#fffdf6;border:3px solid var(--ink);border-radius:20px;padding:14px 22px;
+  font-family:var(--font-display);font-size:23px;box-shadow:var(--shadow);opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:10px;max-width:88vw;text-align:center}
+.toast.show{animation:toast 1.6s ease-out}
+.toast.good{color:var(--teal-d)} .toast.oops{color:var(--coral-d)}
+@keyframes toast{0%{opacity:0;transform:translateX(-50%) scale(.6)}
+  15%{opacity:1;transform:translateX(-50%) scale(1.05)}
+  80%{opacity:1;transform:translateX(-50%) scale(1)}
+  100%{opacity:0;transform:translateX(-50%) scale(1) translateY(-14px)}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:150;overflow:hidden}
+.confetti b{position:absolute;font-size:22px;animation:cfall linear forwards}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0);opacity:1}
+  100%{transform:translateY(60vh) rotate(320deg);opacity:0}}
+
+@keyframes pop{0%{transform:scale(.7)}55%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}
+  60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001s!important;animation-iteration-count:1!important}
+  .sea-bubbles{display:none}
+}
+/* ---------- small phones ---------- */
+@media (max-width:420px){
+  .book{outline-offset:-9px;border-radius:20px;padding:14px 12px 16px}
+  .wcard{width:84px;height:80px}
+  .head .finn{width:46px}
+}
+/* ---------- print: only the certificate ---------- */
+@media print{
+  body{background:#fff;padding:0}
+  .sea-bubbles,.head,.tray,.bigidea,.win-finn,.win-row,#s-win h2,.corner{display:none!important}
+  .book{box-shadow:none;outline:none;min-height:auto}
+  .screen{display:none!important}
+  #s-win.on{display:block!important}
+  .cert{border:3px double #333;box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ambient backdrop bubbles -->
+<div class="sea-bubbles" id="seaBubbles" aria-hidden="true"></div>
+
+<!-- underwater reef backdrop (frames the booklet like the seabed) -->
+<div class="reef" aria-hidden="true">
+<svg viewBox="0 0 1440 300" xmlns="http://www.w3.org/2000/svg"><g filter="url(#wobble)">
+ <path d="M60,300 C48,252 78,224 62,180 C50,152 72,134 62,112" stroke="#3f9d5f" stroke-width="13" fill="none" stroke-linecap="round"/>
+ <path d="M96,300 C86,258 108,232 96,192 C88,166 104,150 96,132" stroke="#57b56f" stroke-width="10" fill="none" stroke-linecap="round"/>
+ <path d="M300,300 C288,250 318,222 302,178 C290,150 312,134 302,114" stroke="#4aa864" stroke-width="12" fill="none" stroke-linecap="round"/>
+ <path d="M640,300 C628,252 658,224 642,180 C630,152 652,134 642,116" stroke="#3f9d5f" stroke-width="13" fill="none" stroke-linecap="round"/>
+ <path d="M900,300 C888,256 916,230 902,190 C892,164 910,148 902,130" stroke="#57b56f" stroke-width="11" fill="none" stroke-linecap="round"/>
+ <path d="M1150,300 C1138,250 1168,222 1152,178 C1140,150 1162,134 1152,114" stroke="#4aa864" stroke-width="12" fill="none" stroke-linecap="round"/>
+ <path d="M1382,300 C1372,258 1394,232 1382,192 C1374,166 1390,150 1382,132" stroke="#3f9d5f" stroke-width="13" fill="none" stroke-linecap="round"/>
+ <path d="M0,168 C220,138 430,158 720,150 C1010,142 1240,162 1440,144 V300 H0 Z" fill="#e6ce93"/>
+ <path d="M0,196 C240,170 520,188 760,183 C1030,177 1270,193 1440,178 V300 H0 Z" fill="#d6bb79"/>
+ <ellipse cx="150" cy="238" rx="36" ry="20" fill="#8a9298"/>
+ <ellipse cx="700" cy="242" rx="34" ry="19" fill="#939aa0"/>
+ <ellipse cx="1290" cy="240" rx="42" ry="22" fill="#8a9298"/>
+ <g stroke="#a06ac0" stroke-width="10" fill="none" stroke-linecap="round"><path d="M204,262 V206"/><path d="M204,228 l-19,-17"/><path d="M204,220 l19,-21"/><path d="M185,211 v-15"/><path d="M223,199 v-13"/></g>
+ <g stroke="#ec6a8a" stroke-width="9" fill="none" stroke-linecap="round"><path d="M760,262 V214"/><path d="M760,232 l-15,-15"/><path d="M760,226 l15,-17"/><path d="M745,220 v-13"/></g>
+ <g stroke="#ef8a4a" stroke-width="10" fill="none" stroke-linecap="round"><path d="M1240,262 V208"/><path d="M1240,230 l-19,-19"/><path d="M1240,222 l19,-21"/><path d="M1221,211 v-15"/></g>
+ <g stroke="#6cbf7a" stroke-width="4" fill="none" stroke-linecap="round"><path d="M540,290 q-5,-24 2,-40 M550,290 q5,-22 0,-38 M560,290 q9,-20 4,-34"/></g>
+ <g stroke="#6cbf7a" stroke-width="4" fill="none" stroke-linecap="round"><path d="M1080,292 q-5,-24 2,-40 M1090,292 q5,-22 0,-36"/></g>
+ <polygon points="95,250 100.3,262.7 114,263.8 103.6,272.8 106.8,286.2 95,279 83.2,286.2 86.4,272.8 76,263.8 89.7,262.7" fill="#ef8a4a"/>
+ <polygon points="1330,250 1334.7,261.5 1347.1,262.4 1337.6,270.5 1340.6,282.6 1330,276 1319.4,282.6 1322.4,270.5 1312.9,262.4 1325.3,261.5" fill="#f0995a"/>
+ <path d="M405,264 a15,13 0 0 1 30,0 Z" fill="#f3d9c9"/><path d="M420,264 V246 M413,264 l-4,-14 M427,264 l4,-14" stroke="#d1a58c" stroke-width="1.6" fill="none"/>
+ <path d="M995,266 a13,11 0 0 1 26,0 Z" fill="#f6e0d0"/><path d="M1008,266 V250 M1002,266 l-3,-12 M1014,266 l3,-12" stroke="#d1a58c" stroke-width="1.4" fill="none"/>
+</g></svg>
+</div>
+
+<!-- hidden SVG filter for the hand-drawn pencil wobble -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble"><feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/></filter>
+</svg>
+
+<main class="book" id="book">
+  <span class="corner tl">🐚</span><span class="corner tr">⭐</span>
+  <span class="corner bl">🌿</span><span class="corner br">🐚</span>
+
+  <!-- HEADER -->
+  <header class="head">
+    <span class="finn" id="headFinn" aria-hidden="true"></span>
+    <div class="titlebox">
+      <div class="kicker">Fishy Science</div>
+      <h1>Do Fish Drink Water?</h1>
+    </div>
+    <div class="audio-btns">
+      <button class="iconbtn on" id="muteBtn" aria-label="Turn sound on or off" title="Sound on/off">🔊</button>
+    </div>
+  </header>
+
+  <!-- PROGRESS TRAY -->
+  <div class="tray" id="tray" hidden>
+    <span class="lab">My shells</span>
+    <div class="slots" id="slots" aria-label="Shells collected"></div>
+  </div>
+
+  <div class="stage">
+
+  <!-- ============ SCREEN 1 : START ============ -->
+  <section class="screen on" id="s-start" aria-label="Start">
+    <span class="bigfinn" id="bigFinn" aria-hidden="true"></span>
+    <h2>Do Fish Drink<br>Water? 🐟</h2>
+    <p class="tag">Some fish gulp water all day. Others never drink — they just pee a lot! Let's find out why.</p>
+    <button class="play" id="playBtn">▶ Play</button>
+    <details class="grown">
+      <summary>👋 For grown-ups</summary>
+      <div class="note">
+        This game teaches <b>osmosis</b> in kid words. Sit together and tap <b>🔊 Hear it</b> so a pre-reader can play.
+        The big idea: a fish is like a water balloon with tiny holes. <b>Salty ocean water pulls water OUT</b> of the fish, so
+        saltwater fish must <b>drink</b> to refill (and push salt out their gills). <b>Fresh water pushes IN</b>, so freshwater
+        fish get too full and make <b>lots of pee</b>. About 4 minutes.
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ SCREEN : LEARN — Two kinds of water ============ -->
+  <section class="screen" id="s-learn" aria-label="Learn: two kinds of water">
+    <div class="level-tag">Learn first · Two kinds of water</div>
+    <div class="say">
+      <span class="finn" aria-hidden="true"></span>
+      <div class="q" id="learnq">Water can be <b>salty</b> or <b>fresh</b>. Tap each one! 👇</div>
+    </div>
+    <div class="hearline"><button class="hear" data-hear="learnq">🔊 Hear it</button></div>
+    <div class="learn-panels">
+      <button class="lp salt" id="lpSalt" aria-label="Salt water — tap to hear">
+        <span class="lp-art" id="lpSaltArt"></span>
+        <span class="lp-body">
+          <span class="lp-title">🧂 Salt water</span>
+          <span class="lp-fact">Oceans and seas. Full of salt — too salty to drink!</span>
+          <span class="lp-tap">👆 tap to hear</span>
+        </span>
+      </button>
+      <button class="lp fresh" id="lpFresh" aria-label="Fresh water — tap to hear">
+        <span class="lp-art" id="lpFreshArt"></span>
+        <span class="lp-body">
+          <span class="lp-title">💧 Fresh water</span>
+          <span class="lp-fact">Rivers, lakes and rain. Clean water we can drink!</span>
+          <span class="lp-tap">👆 tap to hear</span>
+        </span>
+      </button>
+    </div>
+    <button class="play" id="learnNext" style="font-size:23px;padding:15px 34px;margin-top:10px">I'm ready! ▶</button>
+  </section>
+
+  <!-- ============ GAME 1 : SORT THE WATER (drag/tap) ============ -->
+  <section class="screen" id="s-l2" aria-label="Sort the water">
+    <div class="level-tag">Game 1 · Sort the water</div>
+    <div class="say">
+      <span class="finn" aria-hidden="true"></span>
+      <div class="q" id="l2q">Drag each place to the right water. Salt or fresh?</div>
+    </div>
+    <div class="hearline"><button class="hear" data-hear="l2q">🔊 Hear it</button></div>
+    <div class="sort-cards" id="l2cards"></div>
+    <div class="buckets">
+      <div class="bucket salt" id="bkSalt" data-kind="salt">
+        <div class="bkicon">🧂</div>
+        <div class="cap">Salt water</div><div class="drop">drop here</div>
+        <div class="caught" id="caughtSalt"></div>
+      </div>
+      <div class="bucket fresh" id="bkFresh" data-kind="fresh">
+        <div class="bkicon">💧</div>
+        <div class="cap">Fresh water</div><div class="drop">drop here</div>
+        <div class="caught" id="caughtFresh"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GAME : MATCH THEM UP (connect) ============ -->
+  <section class="screen" id="s-l6" aria-label="Match them up">
+    <div class="level-tag">Game 2 · Match them up</div>
+    <div class="say" style="margin-bottom:2px">
+      <span class="finn" aria-hidden="true"></span>
+      <div class="q" id="l6q">Tap a fish, then tap what it does. Draw a line!</div>
+    </div>
+    <div class="hearline"><button class="hear" data-hear="l6q">🔊 Hear it</button></div>
+    <div class="match-hint">Tap one on the left, then its match on the right 👉</div>
+    <div class="matchwrap">
+      <svg class="match-svg" id="matchSvg" aria-hidden="true"></svg>
+      <div class="cols">
+        <div class="col" id="colL"></div>
+        <div class="col" id="colR"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE BIG SECRET : Balloon fish (osmosis, interactive) ============ -->
+  <section class="screen" id="s-balloon" aria-label="The big secret: balloon fish">
+    <div class="level-tag secret">The big secret! 🎈</div>
+    <div class="say"><span class="finn" aria-hidden="true"></span><div class="q" id="balloonq">A fish is like a <b>balloon full of water</b>, with tiny holes. Give it each water! 👇</div></div>
+    <div class="hearline"><button class="hear" data-hear="balloonq">🔊 Hear it</button></div>
+    <div class="fish-stage salt" id="balloonStage">
+      <div class="home" id="balloonHome"></div>
+      <span class="swimmer" id="balloonFish"></span>
+      <div class="tag2" id="balloonCap">Tap a water below! 👇</div>
+    </div>
+    <div class="dp">
+      <button class="big-choice no" id="btnSalt"><span class="em">🧂</span>Salty water</button>
+      <button class="big-choice yes" id="btnFresh"><span class="em">💧</span>Fresh water</button>
+    </div>
+    <button class="play" id="balloonNext" style="font-size:23px;padding:14px 34px;margin-top:8px;display:none">I get it! ▶</button>
+  </section>
+
+  <!-- ============ GAME ① : FOLLOW THE SALT (the rule — water goes to the saltier side) ============ -->
+  <section class="screen" id="s-salt" aria-label="Follow the salt">
+    <div class="level-tag">The rule · Water follows the salt 🧂</div>
+    <div class="say"><span class="finn" aria-hidden="true"></span><div class="q" id="saltq">Water sneaks to the <b>saltier</b> side! Count the salt — which way will it go?</div></div>
+    <div class="hearline"><button class="hear" data-hear="saltq">🔊 Hear it</button></div>
+    <div class="fish-stage salt" id="saltStage">
+      <div class="home" id="saltHome"></div>
+      <div class="salt-cloud" id="saltCloud" aria-hidden="true"></div>
+      <span class="swimmer" id="saltFish"></span>
+      <div class="count-badge salt-in" id="saltIn">🐟 <span class="grains" id="saltInG"></span></div>
+      <div class="count-badge salt-out" id="saltOut">🌊 <span class="grains" id="saltOutG"></span></div>
+      <div class="tag2" id="saltCap">Where is there more salt? 🧂</div>
+    </div>
+    <div class="dp">
+      <button class="big-choice no" data-dir="out"><span class="em">💧⬅️</span>Water goes OUT</button>
+      <button class="big-choice yes" data-dir="in"><span class="em">➡️💧</span>Water comes IN</button>
+    </div>
+    <button class="play" id="saltNext" style="font-size:23px;padding:14px 34px;margin-top:8px;display:none">Next ▶</button>
+  </section>
+
+  <!-- ============ GAME : FEED THE OCEAN FISH (hold/tap to drink) ============ -->
+  <section class="screen" id="s-feed" aria-label="Give the ocean fish a drink">
+    <div class="level-tag">Play · Give the fish a drink 🥤</div>
+    <div class="say"><span class="finn" aria-hidden="true"></span><div class="q" id="feedq">The salty sea pulls water <b>OUT</b>! Tap the cup a lot to help the fish <b>drink</b>. 🥤</div></div>
+    <div class="hearline"><button class="hear" data-hear="feedq">🔊 Hear it</button></div>
+    <div class="fish-stage salt" id="feedStage">
+      <div class="home" id="feedHome"></div>
+      <span class="swimmer" id="feedFish"></span>
+      <div class="meter" id="feedMeter"><i></i><span class="meter-lab">💧</span></div>
+      <div class="tag2" id="feedCap">Ocean fish is thirsty!</div>
+    </div>
+    <div class="dp"><button class="big-choice yes big-tap" id="feedBtn"><span class="em">🥤</span>Pour water</button></div>
+    <button class="play" id="feedNext" style="font-size:23px;padding:14px 34px;margin-top:8px;display:none">Next ▶</button>
+  </section>
+
+  <!-- ============ GAME : HELP THE RIVER FISH PEE (tap the FISH) ============ -->
+  <section class="screen" id="s-pee" aria-label="Help the river fish pee">
+    <div class="level-tag">Play · Help the fish pee 💦</div>
+    <div class="say"><span class="finn" aria-hidden="true"></span><div class="q" id="peeq">Fresh water fills the fish too full! <b>Tap the fish</b> to squirt the extra water out. 💦</div></div>
+    <div class="hearline"><button class="hear" data-hear="peeq">🔊 Hear it</button></div>
+    <div class="fish-stage fresh" id="peeStage">
+      <div class="home" id="peeHome"></div>
+      <span class="swimmer" id="peeFish"></span>
+      <span class="pee-hint" id="peeHint" aria-hidden="true">👆</span>
+      <div class="count-badge" id="peeCount">💦 0</div>
+      <div class="tag2" id="peeCap">Too full! Tap the fish to pee 💦</div>
+    </div>
+    <button class="play" id="peeNext" style="font-size:23px;padding:14px 34px;margin-top:10px;display:none">Next ▶</button>
+  </section>
+
+  <!-- ============ GAME ③ : KEEP THE FISH JUST RIGHT (apply the rule — balance) ============ -->
+  <section class="screen" id="s-balance" aria-label="Keep the fish just right">
+    <div class="level-tag">Boss game · Keep the fish just right ⚖️</div>
+    <div class="say"><span class="finn" aria-hidden="true"></span><div class="q" id="balq">Read the water! Keep the fish in the <b>green zone</b> 😄</div></div>
+    <div class="hearline"><button class="hear" data-hear="balq">🔊 Hear it</button></div>
+    <div class="fish-stage salt" id="balStage">
+      <div class="home" id="balHome"></div>
+      <span class="swimmer" id="balFish"></span>
+      <div class="comfort" id="balComfort"><div class="fill" id="balFill"></div><div class="zone"></div></div>
+      <div class="count-badge" id="balRound">🧂 Ocean</div>
+      <div class="tag2" id="balCap">Too dry! Give it a drink 🥤</div>
+    </div>
+    <div class="dp">
+      <button class="big-choice yes" id="balDrink"><span class="em">🥤</span>Drink</button>
+      <button class="big-choice no" id="balPee"><span class="em">💦</span>Pee</button>
+    </div>
+    <button class="play" id="balNext" style="font-size:23px;padding:14px 34px;margin-top:8px;display:none">Next ▶</button>
+  </section>
+
+  <!-- ============ SCREEN 7 : WIN / CERTIFICATE ============ -->
+  <section class="screen" id="s-win" aria-label="You did it">
+    <span class="win-finn" id="winFinn" aria-hidden="true"></span>
+    <h2>You did it! 🎉</h2>
+    <div class="bigidea">
+      Remember the secret:
+      <div class="row"><span>🌊 Ocean fish <b>DRINK</b> a lot 🥤</span></div>
+      <div class="row"><span>🏞️ River fish <b>PEE</b> a lot 💦</span></div>
+    </div>
+    <div class="cert">
+      <div class="seal">🏅</div>
+      <div class="ct">Fish Scientist Certificate</div>
+      <div class="txt">This certifies that</div>
+      <input class="who" id="certName" value="My Name" aria-label="Type your name" spellcheck="false" maxlength="22">
+      <div class="txt">now knows why fish drink water! 🐟💧</div>
+    </div>
+    <div class="win-row">
+      <button class="btn2" id="hearWin">🔊 Hear the secret</button>
+      <button class="btn2" id="printCert">🖨️ Print my badge</button>
+      <button class="btn2 go" id="playAgain">🔁 Play again</button>
+    </div>
+  </section>
+
+  </div><!-- /stage -->
+</main>
+
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Generated from fish-water-tts.json. Missing clips deliberately fall back to browser speech. -->
+<script src="assets/audio/fish-water/manifest.js"></script>
+<script>
+"use strict";
+/* ==========================================================
+   Fish SVG — one cute vintage fish, recolored per role.
+   ========================================================== */
+function fishSVG(opts){
+  var o = opts||{};
+  var body = o.body||'#ee7355', belly = o.belly||'#f6b8a4', glasses = !!o.glasses;
+  var ink='#22404a';
+  return (
+  '<svg viewBox="0 0 130 96" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;overflow:visible">'+
+   '<g filter="url(#wobble)">'+
+    /* tail */
+    '<path d="M92,48 C112,26 124,26 124,48 C124,70 112,70 92,48 Z" fill="'+body+'" stroke="'+ink+'" stroke-width="3"/>'+
+    /* body */
+    '<ellipse cx="52" cy="48" rx="46" ry="32" fill="'+body+'" stroke="'+ink+'" stroke-width="3.2"/>'+
+    /* belly */
+    '<path d="M18,58 Q52,90 90,60 Q52,72 18,58 Z" fill="'+belly+'" opacity="0.9"/>'+
+    /* top fin */
+    '<path d="M40,17 Q52,1 66,18 Q52,14 40,17 Z" fill="'+body+'" stroke="'+ink+'" stroke-width="3"/>'+
+    /* side fin */
+    '<path d="M48,58 Q58,80 70,62 Q60,60 48,58 Z" fill="'+belly+'" stroke="'+ink+'" stroke-width="2.6"/>'+
+    /* smile */
+    '<path d="M22,54 Q30,62 42,56" fill="none" stroke="'+ink+'" stroke-width="3" stroke-linecap="round"/>'+
+    /* eye */
+    '<circle cx="34" cy="38" r="10" fill="#fff" stroke="'+ink+'" stroke-width="3"/>'+
+    '<circle cx="31" cy="39" r="4.6" fill="'+ink+'"/>'+
+    '<circle cx="29" cy="37" r="1.7" fill="#fff"/>'+
+    (glasses?
+      /* rosy cheek — cute & natural (no diving gear) */
+      '<ellipse cx="27" cy="49" rx="6" ry="4.5" fill="#ff9a8a" opacity="0.45"/>':'')+
+   '</g>'+
+  '</svg>');
+}
+
+/* ==========================================================
+   Water-place SVG scenes — big hand-drawn art that FILLS the
+   whole frame (replaces the tiny photo-style emoji).
+   ========================================================== */
+var _svgId=0;
+function sceneSVG(kind){
+  var id='sg'+(_svgId++);
+  function w(defs,inner){return '<svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">'+(defs?'<defs>'+defs+'</defs>':'')+'<g filter="url(#wobble)">'+inner+'</g></svg>';}
+  function grad(g,c1,c2){return '<linearGradient id="'+g+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+c1+'"/><stop offset="1" stop-color="'+c2+'"/></linearGradient>';}
+  function cloud(x,y,s){return '<g fill="#ffffff" opacity="0.92"><ellipse cx="'+x+'" cy="'+y+'" rx="'+(26*s)+'" ry="'+(12*s)+'"/><circle cx="'+(x-15*s)+'" cy="'+(y-2*s)+'" r="'+(10*s)+'"/><circle cx="'+(x+14*s)+'" cy="'+(y-3*s)+'" r="'+(12*s)+'"/><circle cx="'+(x+2*s)+'" cy="'+(y-8*s)+'" r="'+(11*s)+'"/></g>';}
+  function sunS(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="22" fill="#ffe89a"/><circle cx="'+x+'" cy="'+y+'" r="14" fill="#ffd24a"/>';}
+  function tree(x,b){return '<g><rect x="'+(x-4)+'" y="'+b+'" width="8" height="30" rx="3" fill="#9c6b3f"/><circle cx="'+(x-10)+'" cy="'+(b+2)+'" r="12" fill="#6fa843"/><circle cx="'+(x+10)+'" cy="'+(b+2)+'" r="12" fill="#6fa843"/><circle cx="'+x+'" cy="'+(b-8)+'" r="16" fill="#5f9a37"/></g>';}
+  function bush(x,y){return '<g fill="#6fa843"><circle cx="'+(x-9)+'" cy="'+(y+3)+'" r="9"/><circle cx="'+(x+9)+'" cy="'+(y+3)+'" r="9"/><circle cx="'+x+'" cy="'+y+'" r="12"/></g>';}
+  function star(cx,cy,r,c){var p='';for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5;var rr=(i%2?r*0.45:r);p+=(cx+Math.cos(a)*rr).toFixed(1)+','+(cy+Math.sin(a)*rr).toFixed(1)+' ';}return '<polygon points="'+p+'" fill="'+c+'"/>';}
+
+  if(kind==='ocean'||kind==='sea'){
+    var s='<rect width="320" height="180" fill="url(#'+id+'k)"/>';
+    s+=sunS(262,36)+cloud(92,44,1)+cloud(184,30,0.8);
+    s+='<path d="M0,80 C50,70 92,88 160,80 C228,72 276,90 320,80 V180 H0 Z" fill="url(#'+id+'w)"/>';
+    s+='<path d="M0,106 C60,98 112,114 176,106 C240,98 286,112 320,106 V180 H0 Z" fill="#3f9fb3" opacity="0.55"/>';
+    s+='<path d="M40,82 q10,-7 20,0 M150,82 q10,-7 20,0 M250,82 q10,-7 20,0" stroke="#eafaff" stroke-width="3" fill="none" stroke-linecap="round"/>';
+    if(kind==='sea'){
+      s+='<path d="M0,146 C60,138 130,150 210,146 C260,143 300,150 320,148 V180 H0 Z" fill="#ecd49a"/>';
+      s+='<path d="M60,166 a13,11 0 0 1 26,0 Z" fill="#ee7355"/><path d="M73,166 V155 M66,166 l-3,-10 M80,166 l3,-10" stroke="#c9542f" stroke-width="1.6" fill="none"/>';
+      s+=star(250,160,9,'#ef8a4a');
+    } else {
+      s+='<g fill="#12495a" opacity="0.4"><path d="M28,180 C22,158 40,152 30,134 C40,148 46,150 40,180 Z"/><path d="M292,180 C286,156 302,150 294,132 C304,148 308,150 300,180 Z"/></g>';
+    }
+    return w(grad(id+'k','#bfe3f2','#e9f5f9')+grad(id+'w','#57b8cc','#1c6675'),s);
+  }
+  if(kind==='waves'){
+    /* a big BREAKING wave with white foam — clearly different from the calm ocean */
+    var s='<rect width="320" height="180" fill="url(#'+id+'k)"/>';
+    s+=cloud(72,30,0.8)+cloud(238,26,0.7);
+    s+='<rect y="96" width="320" height="84" fill="url(#'+id+'w)"/>';
+    s+='<path d="M-10,106 q40,-20 80,0 t80,0 t80,0 t90,0 V180 H-10 Z" fill="#4fa6bb" opacity="0.55"/>';
+    s+='<path d="M150,150 C150,92 190,60 232,68 C270,75 286,122 262,150 Z" fill="#2f86a8"/>';                                   /* big wave body */
+    s+='<path d="M150,150 C150,100 182,74 214,80 C196,90 190,110 190,124 C190,142 168,150 150,150 Z" fill="#8fd0e0" opacity="0.85"/>'; /* curl hollow */
+    s+='<path d="M150,150 C150,92 190,60 232,68 C270,75 286,122 262,150" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>'; /* foam crest */
+    s+='<g fill="#ffffff"><circle cx="232" cy="66" r="9"/><circle cx="216" cy="72" r="7"/><circle cx="248" cy="74" r="7"/><circle cx="203" cy="80" r="5"/></g>'; /* foam blobs */
+    s+='<g fill="#ffffff" opacity="0.9"><circle cx="228" cy="48" r="3.5"/><circle cx="250" cy="54" r="3"/><circle cx="210" cy="52" r="2.5"/><circle cx="264" cy="62" r="2.5"/></g>'; /* spray */
+    s+='<path d="M0,150 C12,124 46,118 60,138 C67,148 57,152 51,148 C57,134 35,130 27,144 C23,150 8,152 0,150 Z" fill="#3f9fb3"/>'; /* small front wave */
+    s+='<path d="M2,140 C18,124 42,122 56,134" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.85"/>';
+    return w(grad(id+'k','#cfe7f2','#eaf6fb')+grad(id+'w','#57b8cc','#1c6675'),s);
+  }
+  if(kind==='river'){
+    var s='<rect width="320" height="180" fill="url(#'+id+'k)"/>';
+    s+=sunS(58,34)+cloud(154,32,0.85)+cloud(250,46,0.75);
+    s+='<path d="M0,70 q60,-22 130,-6 q90,18 190,-8 V180 H0 Z" fill="#9fca63"/>';
+    /* a rounded far hill the river winds out from (so it starts on land, not the sky) */
+    s+='<path d="M108,86 q42,-30 84,0 Z" fill="#8bbf57"/>';
+    s+='<path d="M0,96 q80,-14 160,0 q90,14 160,-4 V180 H0 Z" fill="url(#'+id+'g)"/>';
+    /* river SOURCE now sits low among the hills (y≈84) and flows down to the foreground */
+    s+='<path d="M150,84 C128,110 176,124 150,150 C136,166 150,176 150,190" stroke="#8fd0e0" stroke-width="30" fill="none" stroke-linecap="round"/>';
+    s+='<path d="M150,84 C132,110 172,124 152,150 C140,166 150,176 150,190" stroke="#5bb6d8" stroke-width="20" fill="none" stroke-linecap="round"/>';
+    s+='<path d="M150,90 C138,112 166,124 154,146" stroke="#c9edf6" stroke-width="5" fill="none" stroke-linecap="round"/>';
+    s+=tree(46,108)+tree(270,118)+bush(98,152)+bush(222,158);
+    s+='<g><circle cx="80" cy="150" r="2.6" fill="#fff"/><circle cx="80" cy="150" r="1.1" fill="#f2c94c"/><circle cx="235" cy="140" r="2.6" fill="#fff"/><circle cx="235" cy="140" r="1.1" fill="#f2c94c"/><circle cx="120" cy="168" r="2.6" fill="#f6a8c0"/><circle cx="30" cy="152" r="2.4" fill="#fff"/><circle cx="200" cy="170" r="2.4" fill="#fff"/></g>';
+    return w(grad(id+'k','#bfe3f2','#e9f5f9')+grad(id+'g','#a6d16a','#7bb84a'),s);
+  }
+  if(kind==='lake'){
+    var s='<rect width="320" height="180" fill="url(#'+id+'k)"/>';
+    s+=sunS(56,32)+cloud(214,36,0.85);
+    s+='<path d="M0,92 L66,40 L118,80 L182,34 L248,88 L320,58 V132 H0 Z" fill="#4f9aa0"/>';
+    s+='<path d="M44,58 L66,40 L88,58 Z M160,50 L182,34 L204,54 Z" fill="#eaf4f4" opacity="0.9"/>';
+    s+='<path d="M0,102 L58,64 L110,96 L176,58 L246,100 L320,80 V140 H0 Z" fill="#3f8088"/>';
+    s+='<rect y="110" width="320" height="14" fill="#7bb84a"/>';
+    s+='<ellipse cx="160" cy="152" rx="152" ry="30" fill="url(#'+id+'l)"/>';
+    s+='<path d="M96,150 h44 M150,159 h64 M118,166 h40" stroke="#d3eef7" stroke-width="3" stroke-linecap="round" opacity="0.85"/>';
+    s+=tree(38,106)+tree(288,110);
+    return w(grad(id+'k','#bfe3f2','#e9f5f9')+grad(id+'l','#6cc2de','#2f86a8'),s);
+  }
+  if(kind==='rain'){
+    var s='<rect width="320" height="180" fill="url(#'+id+'k)"/>';
+    s+='<g fill="#9fb0b2"><ellipse cx="86" cy="50" rx="52" ry="27"/><ellipse cx="150" cy="42" rx="46" ry="27"/><ellipse cx="216" cy="52" rx="54" ry="29"/></g>';
+    s+='<g fill="#bccacb"><ellipse cx="112" cy="42" rx="40" ry="21"/><ellipse cx="196" cy="44" rx="42" ry="22"/></g>';
+    s+='<g stroke="#6fb6d6" stroke-width="4" stroke-linecap="round">';
+    var rx=[70,110,150,190,230,92,172,212],ry=[92,96,92,96,92,122,124,122];
+    for(var i=0;i<rx.length;i++){s+='<line x1="'+rx[i]+'" y1="'+ry[i]+'" x2="'+(rx[i]-9)+'" y2="'+(ry[i]+24)+'"/>';}
+    s+='</g>';
+    s+='<ellipse cx="160" cy="168" rx="120" ry="15" fill="#8fd0e0"/>';
+    s+='<ellipse cx="122" cy="166" rx="18" ry="4" fill="none" stroke="#d3eef7" stroke-width="2"/>';
+    s+='<path d="M268,168 q-9,-15 -2,-30 M268,168 q10,-14 2,-27" stroke="#5f9a37" stroke-width="3" fill="none" stroke-linecap="round"/>';
+    return w(grad(id+'k','#aebfc4','#ccd8da'),s);
+  }
+  return w('','<rect width="320" height="180" fill="#d7ecef"/>');
+}
+
+/* ==========================================================
+   Underwater scenes — so a child SEES the fish's home:
+   salt = blue sea with coral/starfish, fresh = green river
+   with reeds/lily-pad/pebbles.
+   ========================================================== */
+function starPoly(cx,cy,r,c){var p='';for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5;var rr=(i%2?r*0.45:r);p+=(cx+Math.cos(a)*rr).toFixed(1)+','+(cy+Math.sin(a)*rr).toFixed(1)+' ';}return '<polygon points="'+p+'" fill="'+c+'"/>';}
+function underwaterSVG(kind){
+  var id='uw'+(_svgId++);
+  var salt=(kind==='salt');
+  var top=salt?'#5ab4cd':'#7cc6bf', bot=salt?'#15546a':'#207a68';
+  var s='<defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+top+'"/><stop offset="1" stop-color="'+bot+'"/></linearGradient></defs>';
+  s+='<rect width="320" height="180" fill="url(#'+id+')"/>';
+  s+='<g fill="#ffffff" opacity="0.09"><polygon points="45,0 72,0 34,180 -18,180"/><polygon points="150,0 174,0 142,180 104,180"/><polygon points="250,0 284,0 302,180 252,180"/></g>';
+  s+='<path d="M0,9 q20,-6 40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0 t40,0" stroke="#ffffff" stroke-width="2.5" fill="none" opacity="0.4"/>';
+  s+='<path d="M0,152 C60,142 120,158 200,152 C255,148 300,158 320,152 V180 H0 Z" fill="'+(salt?'#e2c988':'#cdbe93')+'"/>';
+  if(salt){
+    /* a coral REEF — unmistakably the sea */
+    s+='<g stroke="#ef8a4a" stroke-width="7" fill="none" stroke-linecap="round"><path d="M34,154 V118"/><path d="M34,136 l-13,-12"/><path d="M34,130 l13,-14"/><path d="M21,127 v-11"/><path d="M47,118 v-11"/></g>';               /* orange branching coral (left) */
+    s+='<path d="M60,154 q-4,-19 16,-20 q20,1 16,20 Z" fill="#ec7f9c"/><path d="M63,149 q6,-5 12,0 M66,143 q6,-4 12,0 M65,137 q5,-3 10,0" stroke="#c95f7e" stroke-width="2" fill="none" stroke-linecap="round"/>'; /* pink brain coral */
+    s+='<g stroke="#a86ac0" stroke-width="6" fill="none" stroke-linecap="round"><path d="M292,154 V120"/><path d="M292,136 l-13,-12"/><path d="M292,130 l13,-14"/><path d="M279,126 v-11"/></g>';                 /* purple fan coral (right) */
+    s+='<g stroke="#ee6a55" stroke-width="6" fill="none" stroke-linecap="round"><path d="M268,154 V126"/><path d="M268,138 l-11,-10"/><path d="M268,132 l11,-12"/></g>';                                       /* red branching coral */
+    s+='<g stroke="#ffab5c" stroke-width="4.5" fill="none" stroke-linecap="round"><path d="M150,152 v-20"/><path d="M150,152 q-6,-12 -10,-16"/><path d="M150,152 q6,-12 10,-16"/><path d="M150,152 q-11,-8 -16,-9"/><path d="M150,152 q11,-8 16,-9"/></g><ellipse cx="150" cy="153" rx="13" ry="5" fill="#ff8f6a"/>'; /* sea anemone */
+    s+='<path d="M14,154 C6,120 24,112 16,90 C26,110 30,112 24,154 Z" fill="#2f8f6a"/>';
+    s+='<path d="M306,154 C298,124 314,116 306,96 C316,114 320,116 314,154 Z" fill="#2f8f6a"/>';
+    s+=starPoly(214,146,9,'#ef8a4a');
+    s+='<path d="M108,151 a9,7 0 0 1 18,0 Z" fill="#f6d0b0"/><path d="M117,151 V139 M111,151 l-3,-9 M123,151 l3,-9" stroke="#d89a72" stroke-width="1.4" fill="none"/>'; /* seashell */
+  } else {
+    /* a POND / RIVER — reeds, cattails, lily pads, pebbles */
+    s+='<g stroke="#4a9d55" stroke-width="5" fill="none" stroke-linecap="round"><path d="M24,154 C20,120 26,108 22,80"/><path d="M40,154 C44,124 38,112 42,88"/><path d="M52,154 C50,128 56,116 52,100"/></g>';
+    s+='<ellipse cx="22" cy="78" rx="4.5" ry="12" fill="#9a6a38"/><ellipse cx="42" cy="86" rx="4" ry="10" fill="#9a6a38"/>';   /* cattail heads (left) */
+    s+='<g stroke="#4a9d55" stroke-width="5" fill="none" stroke-linecap="round"><path d="M300,154 C304,122 298,110 302,82"/><path d="M286,154 C282,128 288,116 284,100"/></g>';
+    s+='<ellipse cx="302" cy="80" rx="4.5" ry="12" fill="#9a6a38"/>';                                                          /* cattail head (right) */
+    s+='<path d="M58,18 a24,9 0 1 0 48,0 a24,9 0 1 0 -48,0 Z" fill="#3f9d5f"/><path d="M106,18 l-7,-5 M106,18 l-7,5" stroke="#2f7d4a" stroke-width="2"/>'; /* lily pad 1 */
+    s+='<path d="M212,13 a20,8 0 1 0 40,0 a20,8 0 1 0 -40,0 Z" fill="#4aa864"/><path d="M252,13 l-6,-4 M252,13 l-6,4" stroke="#2f7d4a" stroke-width="2"/>';   /* lily pad 2 */
+    s+='<g fill="#f6a8c0"><ellipse cx="82" cy="12" rx="2" ry="4.5"/><ellipse cx="77" cy="18" rx="4.5" ry="2"/><ellipse cx="87" cy="18" rx="4.5" ry="2"/><ellipse cx="79" cy="14" rx="3.5" ry="3"/><ellipse cx="85" cy="14" rx="3.5" ry="3"/></g><circle cx="82" cy="16" r="2" fill="#f2c94c"/>'; /* lily flower */
+    s+='<ellipse cx="150" cy="164" rx="19" ry="8" fill="#9a9a86"/><ellipse cx="150" cy="160" rx="19" ry="6" fill="#b0b09a"/>';
+    s+='<ellipse cx="186" cy="167" rx="12" ry="6" fill="#8f9384"/><ellipse cx="118" cy="167" rx="11" ry="5.5" fill="#a7a690"/>'; /* river pebbles */
+    s+='<g stroke="#5faf5a" stroke-width="3" fill="none" stroke-linecap="round"><path d="M96,154 q-2,-12 -6,-18 M100,154 q0,-13 -1,-19 M104,154 q2,-12 5,-17"/></g>'; /* water grass */
+  }
+  s+='<g fill="#ffffff" opacity="0.45"><circle cx="72" cy="66" r="3"/><circle cx="78" cy="54" r="2"/><circle cx="240" cy="86" r="3.5"/><circle cx="246" cy="72" r="2"/></g>';
+  return '<svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block"><g filter="url(#wobble)">'+s+'</g></svg>';
+}
+
+/* ==========================================================
+   Fish CHARACTERS with expressions (from the reference art):
+   ocean = orange clownfish, river = green fish.
+   expr: happy|excited|surprised|curious|thinking|sleepy|thirsty|full|drinking
+   ========================================================== */
+var _fid=0, FINK='#20323a';
+function eyeO(x,y,r){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#fff" stroke="'+FINK+'" stroke-width="3"/><circle cx="'+(x-2)+'" cy="'+(y+1)+'" r="'+(r*0.46).toFixed(1)+'" fill="'+FINK+'"/><circle cx="'+(x-4)+'" cy="'+(y-2)+'" r="'+(r*0.17).toFixed(1)+'" fill="#fff"/>';}
+function eyeL(x,y,r,dx,dy){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#fff" stroke="'+FINK+'" stroke-width="3"/><circle cx="'+(x+dx)+'" cy="'+(y+dy)+'" r="'+(r*0.46).toFixed(1)+'" fill="'+FINK+'"/><circle cx="'+(x+dx-2)+'" cy="'+(y+dy-2)+'" r="'+(r*0.17).toFixed(1)+'" fill="#fff"/>';}
+function eyeClosed(x,y){return '<path d="M'+(x-9)+','+y+' q9,8 18,0" fill="none" stroke="'+FINK+'" stroke-width="3" stroke-linecap="round"/>';}
+function eyeDroop(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="10.5" fill="#fff" stroke="'+FINK+'" stroke-width="3"/><circle cx="'+(x-1)+'" cy="'+(y+3)+'" r="4.6" fill="'+FINK+'"/><path d="M'+(x-11)+','+(y-1)+' q11,-7 22,0" fill="none" stroke="'+FINK+'" stroke-width="3" stroke-linecap="round"/>';}
+function blush(x,y,big){var rx=big?9:7,ry=big?7:5;return '<ellipse cx="'+x+'" cy="'+y+'" rx="'+rx+'" ry="'+ry+'" fill="#ff8a7a" opacity="0.4"/>';}
+function faceExpr(expr){
+  var e=blush(56,68,expr==='full'||expr==='excited');
+  if(expr==='excited') e+=blush(20,67,false);
+  switch(expr){
+    case 'excited': e+=eyeO(40,50,11)+'<path d="M50,42 l2.5,-5 2.5,5 -5,-2z" fill="#ffd24a"/>'+'<path d="M22,64 q14,16 28,2 q-14,7 -28,-2 Z" fill="#b8433a" stroke="'+FINK+'" stroke-width="2.6"/><path d="M27,68 q9,6 18,1" fill="#fff" opacity="0.55"/>'; break;
+    case 'surprised': e+=eyeO(40,48,13)+'<ellipse cx="30" cy="70" rx="5.5" ry="7" fill="#b8433a" stroke="'+FINK+'" stroke-width="2.6"/>'; break;
+    case 'curious': e+=eyeL(40,50,11,-1,-4)+'<circle cx="30" cy="69" r="3.6" fill="#b8433a" stroke="'+FINK+'" stroke-width="2.4"/>'; break;
+    case 'thinking': e+=eyeL(40,50,11,-3,-4)+'<path d="M24,69 h13" stroke="'+FINK+'" stroke-width="3" stroke-linecap="round"/>'+'<circle cx="58" cy="28" r="8.5" fill="#fff" stroke="'+FINK+'" stroke-width="2"/><text x="54" y="32.5" font-size="12" font-family="Arial" fill="'+FINK+'">?</text>'; break;
+    case 'sleepy': e+=eyeClosed(40,52)+'<circle cx="30" cy="69" r="3.2" fill="#b8433a" stroke="'+FINK+'" stroke-width="2.2"/>'+'<text x="55" y="33" font-size="14" font-family="Arial" font-style="italic" fill="'+FINK+'">z</text>'; break;
+    case 'thirsty': e+=eyeDroop(40,50)+'<path d="M22,66 q10,9 20,2 q-10,4 -20,-2 Z" fill="#b8433a" stroke="'+FINK+'" stroke-width="2.4"/><path d="M31,69 v8" stroke="#e07a6a" stroke-width="3.5" stroke-linecap="round"/>'+'<path d="M15,42 q-4,7 0,11 q4,-4 0,-11 Z" fill="#7cc6e0" stroke="#4aa6c8" stroke-width="1"/>'; break;
+    case 'full': e+=eyeO(40,47,12)+'<path d="M26,69 q6,5 12,0" fill="none" stroke="'+FINK+'" stroke-width="3" stroke-linecap="round"/>'; break;
+    case 'drinking': e+=eyeO(40,48,11)+'<ellipse cx="27" cy="68" rx="7" ry="9.5" fill="#b8433a" stroke="'+FINK+'" stroke-width="2.6"/>'; break;
+    default: e+=eyeO(40,50,11)+'<path d="M24,66 q11,11 23,2" fill="none" stroke="'+FINK+'" stroke-width="3" stroke-linecap="round"/>';
+  }
+  return e;
+}
+function finFish(type,expr){
+  expr=expr||'happy';
+  var cid='fc'+(_fid++);
+  var ocean=(type==='ocean');
+  var body=ocean?'#f2892f':'#78b86a', bodyD=ocean?'#d9701c':'#57964f',
+      belly=ocean?'#ffe6c2':'#eff0a4', finC=ocean?'#ef7d22':'#98c77e';
+  var s='';
+  s+='<clipPath id="'+cid+'"><ellipse cx="66" cy="60" rx="54" ry="40"/></clipPath>';
+  s+='<path d="M110,60 C136,32 156,38 152,60 C156,82 136,88 110,60 Z" fill="'+finC+'" stroke="'+FINK+'" stroke-width="3.5"/>';
+  s+='<path d="M50,26 Q70,2 94,26 Q72,20 50,26 Z" fill="'+finC+'" stroke="'+FINK+'" stroke-width="3"/>';
+  s+='<ellipse cx="66" cy="60" rx="54" ry="40" fill="'+body+'" stroke="'+FINK+'" stroke-width="3.5"/>';
+  s+='<path d="M18,74 Q66,104 114,76 Q66,88 18,74 Z" fill="'+belly+'" opacity="0.92"/>';
+  s+='<g clip-path="url(#'+cid+')">';
+  if(ocean){
+    s+='<rect x="49" y="15" width="15" height="90" fill="#fff"/><rect x="78" y="15" width="13" height="90" fill="#fff"/><rect x="101" y="15" width="11" height="90" fill="#fff"/>';
+    s+='<g stroke="'+FINK+'" stroke-width="2" opacity="0.4"><line x1="49" y1="15" x2="49" y2="105"/><line x1="64" y1="15" x2="64" y2="105"/><line x1="78" y1="15" x2="78" y2="105"/><line x1="91" y1="15" x2="91" y2="105"/><line x1="101" y1="15" x2="101" y2="105"/><line x1="112" y1="15" x2="112" y2="105"/></g>';
+  } else {
+    s+='<path d="M12,46 Q66,22 120,48 Q66,36 12,46 Z" fill="'+bodyD+'" opacity="0.45"/>';
+    s+='<g fill="'+bodyD+'" opacity="0.3"><circle cx="72" cy="52" r="5"/><circle cx="86" cy="60" r="5"/><circle cx="72" cy="68" r="5"/><circle cx="98" cy="52" r="5"/><circle cx="98" cy="68" r="5"/></g>';
+  }
+  s+='</g>';
+  s+='<path d="M60,72 Q52,94 74,86 Q68,76 60,72 Z" fill="'+finC+'" stroke="'+FINK+'" stroke-width="2.6"/>';
+  s+=faceExpr(expr);
+  return '<svg viewBox="0 0 168 118" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;overflow:visible"><g filter="url(#wobble)">'+s+'</g></svg>';
+}
+
+/* ==========================================================
+   Audio — tap-to-hear speech + gentle sound effects
+   ========================================================== */
+var Audio_ = (function(){
+  var muted=false, actx=null, voice=null, primed=false, narration=null;
+  function pickVoice(){
+    if(!('speechSynthesis'in window))return;
+    var vs=speechSynthesis.getVoices();
+    voice = vs.find(function(v){return /en[-_]US/i.test(v.lang)&&/female|samantha|karen|zira|google us/i.test(v.name)})
+         || vs.find(function(v){return /^en/i.test(v.lang)}) || vs[0] || null;
+  }
+  if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+  function normalizeNarration(text){
+    return String(text).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,'').replace(/\s+/g,' ').trim();
+  }
+  function audioSource(text){
+    var clips=window.TTS_AUDIO||{}, key, target=normalizeNarration(text);
+    if(clips[text])return clips[text];
+    for(key in clips){ if(normalizeNarration(key)===target)return clips[key]; }
+    return null;
+  }
+  function stopNarration(){
+    if(narration){ narration.pause(); narration.currentTime=0; narration=null; }
+    if('speechSynthesis'in window)speechSynthesis.cancel();
+  }
+  function systemVoice(text){
+    if(muted||!('speechSynthesis'in window))return;
+    try{
+      var u=new SpeechSynthesisUtterance(normalizeNarration(text));
+      u.rate=0.92; u.pitch=1.12; if(voice)u.voice=voice; u.lang='en-US';
+      speechSynthesis.speak(u);
+    }catch(e){}
+  }
+  function ctx(){ if(!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}} return actx; }
+  function tone(freq,dur,type,vol){
+    if(muted)return; var c=ctx(); if(!c)return;
+    var o=c.createOscillator(), g=c.createGain();
+    o.type=type||'sine'; o.frequency.value=freq;
+    g.gain.setValueAtTime(0,c.currentTime);
+    g.gain.linearRampToValueAtTime(vol||0.16,c.currentTime+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+dur);
+    o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+dur);
+  }
+  return {
+    prime:function(){ if(primed)return; primed=true; var c=ctx(); if(c&&c.state==='suspended')c.resume();
+      if('speechSynthesis'in window){ try{ var u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u);}catch(e){} } },
+    say:function(text){
+      if(muted)return;
+      stopNarration();
+      var src=audioSource(text);
+      if(!src){ systemVoice(text); return; }
+      try{
+        var clip=new Audio(src); narration=clip;
+        clip.addEventListener('ended',function(){ if(narration===clip)narration=null; });
+        clip.addEventListener('error',function(){ if(narration===clip){ narration=null; systemVoice(text); } });
+        clip.play().catch(function(){ if(narration===clip){ narration=null; systemVoice(text); } });
+      }catch(e){ systemVoice(text); }
+    },
+    good:function(){ tone(660,0.09,'sine',0.18); setTimeout(function(){tone(990,0.14,'sine',0.16);},90); },
+    oops:function(){ tone(300,0.18,'triangle',0.14); },
+    star:function(){ tone(880,0.08,'sine',0.15); setTimeout(function(){tone(1320,0.16,'sine',0.13);},80); },
+    win:function(){ [523,659,784,1046].forEach(function(f,i){setTimeout(function(){tone(f,0.2,'sine',0.16);},i*130);}); },
+    toggle:function(){ muted=!muted; if(muted)stopNarration(); return muted; },
+    isMuted:function(){return muted;}
+  };
+})();
+
+/* ==========================================================
+   Helpers — toast, confetti, star tray, navigation
+   ========================================================== */
+var $=function(id){return document.getElementById(id);};
+var TOTAL_SHELLS=18, shells=0;
+var SHELL_SET=['🐚','⭐','🐠','🌟'];
+
+function buildSlots(){
+  var s=$('slots'); s.innerHTML='';
+  for(var i=0;i<TOTAL_SHELLS;i++){var d=document.createElement('div');d.className='slot';d.id='slot'+i;s.appendChild(d);}
+}
+function addShell(){
+  if(shells>=TOTAL_SHELLS)return;
+  var d=$('slot'+shells); d.classList.add('filled'); d.textContent=SHELL_SET[shells%SHELL_SET.length]; shells++;
+  Audio_.star();
+}
+function toast(msg,ok,speak){
+  var t=$('toast'); t.className='toast '+(ok?'good':'oops'); t.textContent=(ok?'🎉 ':'🐟 ')+msg;
+  void t.offsetWidth; t.classList.add('show');
+  if(ok)Audio_.good(); else Audio_.oops();
+  if(speak!==false)Audio_.say(msg);
+}
+function burstConfetti(){
+  var c=$('confetti'), icons=['🫧','⭐','🐚','🐠','💧','🌟','💛','💚','🩵'];
+  for(var i=0;i<22;i++){(function(i){
+    var b=document.createElement('b');
+    b.textContent=icons[i%icons.length];
+    b.style.left=(4+Math.floor((i/22)*92)+ (i%3)*2)+'%';
+    b.style.top='-20px';
+    b.style.fontSize=(18+(i%4)*6)+'px';
+    b.style.animationDuration=(1.1+(i%5)*0.22)+'s';
+    b.style.animationDelay=(i%4)*0.06+'s';
+    c.appendChild(b); setTimeout(function(){b.remove();},2100);
+  })(i);}
+}
+
+var SCREENS=['s-start','s-learn','s-l2','s-balloon','s-salt','s-feed','s-pee','s-l6','s-balance','s-win'];
+function goTo(id){
+  SCREENS.forEach(function(s){$(s).classList.remove('on');});
+  $(id).classList.add('on');
+  $('tray').hidden = (id==='s-start'||id==='s-learn');
+  document.querySelector('.book').scrollIntoView({block:'nearest'});
+}
+
+/* ==========================================================
+   LEARN — Two kinds of water (theory before the games)
+   ========================================================== */
+function startLearn(){
+  $('lpSaltArt').innerHTML=sceneSVG('ocean');
+  $('lpFreshArt').innerHTML=sceneSVG('river');
+  Audio_.say('Water can be salty, or fresh. Tap each one to learn.');
+}
+function buzz(el){ el.classList.remove('buzz'); void el.offsetWidth; el.classList.add('buzz'); }
+$('lpSalt').addEventListener('click',function(){ buzz(this);
+  Audio_.say('Salt water. Oceans and seas are full of salt. It is too salty to drink!'); });
+$('lpFresh').addEventListener('click',function(){ buzz(this);
+  Audio_.say('Fresh water. Rivers, lakes and rain. This is the clean water we can drink.'); });
+$('learnNext').addEventListener('click',function(){ goTo('s-l2'); startL2(); });
+
+/* ==========================================================
+   GAME 1 — Sort the water (drag AND tap-to-place)
+   ========================================================== */
+var L2=[
+  {scene:'ocean',nm:'Ocean',kind:'salt'},
+  {scene:'river',nm:'River',kind:'fresh'},
+  {scene:'sea',  nm:'Sea',  kind:'salt'},
+  {scene:'lake', nm:'Lake', kind:'fresh'},
+  {scene:'rain', nm:'Rain', kind:'fresh'},
+  {scene:'waves',nm:'Waves',kind:'salt'}
+];
+var l2done=0, picked=null;
+function startL2(){
+  l2done=0; picked=null;
+  $('caughtSalt').innerHTML=''; $('caughtFresh').innerHTML='';
+  var wrap=$('l2cards'); wrap.innerHTML='';
+  L2.forEach(function(it,idx){
+    var c=document.createElement('div');
+    c.className='wcard'; c.tabIndex=0; c.setAttribute('role','button');
+    c.setAttribute('aria-label',it.nm+', put in salt or fresh water');
+    c.innerHTML='<span class="thumb">'+sceneSVG(it.scene)+'</span><span class="nm">'+it.nm+'</span>';
+    c.dataset.kind=it.kind; c.dataset.nm=it.nm; c.dataset.scene=it.scene;
+    attachDrag(c);
+    wrap.appendChild(c);
+  });
+  Audio_.say('Drag each place into salt water or fresh water.');
+}
+function pickCard(c){ if(picked)picked.classList.remove('picked'); picked=c; c.classList.add('picked'); }
+function tryPlace(card,bucket){
+  var right=card.dataset.kind===bucket.dataset.kind;
+  if(right){
+    var caught=$(bucket.dataset.kind==='salt'?'caughtSalt':'caughtFresh');
+    var s=document.createElement('span'); s.className='mini'; s.innerHTML=sceneSVG(card.dataset.scene); caught.appendChild(s);
+    card.classList.add('gone'); if(picked===card)picked=null;
+    setTimeout(function(){card.remove();},300);
+    addShell();
+    l2done++;
+    if(l2done>=L2.length){ burstConfetti(); toast('All sorted! You are a water expert! 🌊',true);
+      setTimeout(function(){ goTo('s-balloon'); startBalloon(); },1700); }
+    else { Audio_.good(); }
+  } else {
+    card.classList.remove('picked'); if(picked===card)picked=null;
+    bucket.classList.remove('hot');
+    card.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:300});
+    toast(card.dataset.nm+' is '+(card.dataset.kind==='salt'?'salt':'fresh')+' water. Try the other one!',false);
+  }
+}
+/* pointer drag with tap-to-place fallback + keyboard */
+function attachDrag(card){
+  var startX,startY,dragging=false,moved=false,ox,oy;
+  card.addEventListener('pointerdown',function(e){
+    startX=e.clientX; startY=e.clientY; moved=false; dragging=true;
+    var r=card.getBoundingClientRect(); ox=e.clientX-r.left; oy=e.clientY-r.top;
+    card.setPointerCapture(e.pointerId);
+  });
+  card.addEventListener('pointermove',function(e){
+    if(!dragging)return;
+    if(Math.abs(e.clientX-startX)>6||Math.abs(e.clientY-startY)>6){
+      if(!moved){ moved=true; card.classList.add('dragging');
+        card.style.position='fixed'; card.style.width=card.offsetWidth+'px'; card.style.margin='0'; }
+      card.style.left=(e.clientX-ox)+'px'; card.style.top=(e.clientY-oy)+'px';
+      hotBucket(e.clientX,e.clientY);
+    }
+  });
+  card.addEventListener('pointerup',function(e){
+    dragging=false;
+    if(moved){
+      card.classList.remove('dragging');
+      var b=bucketAt(e.clientX,e.clientY);
+      card.style.position=''; card.style.left=''; card.style.top=''; card.style.width=''; card.style.margin='';
+      clearHot();
+      if(b) tryPlace(card,b);
+    } else {
+      /* a tap: pick up, then next bucket tap places it */
+      pickCard(card); Audio_.say(card.dataset.nm+'. Now tap salt water or fresh water.');
+    }
+  });
+  card.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pickCard(card); Audio_.say(card.dataset.nm+' picked. Tap a bucket.'); }
+  });
+}
+function bucketAt(x,y){
+  var els=document.elementsFromPoint(x,y);
+  for(var i=0;i<els.length;i++){var b=els[i].closest&&els[i].closest('.bucket'); if(b)return b;}
+  return null;
+}
+function hotBucket(x,y){ clearHot(); var b=bucketAt(x,y); if(b)b.classList.add('hot'); }
+function clearHot(){ document.querySelectorAll('.bucket').forEach(function(b){b.classList.remove('hot');}); }
+document.querySelectorAll('.bucket').forEach(function(b){
+  b.addEventListener('click',function(){ if(picked)tryPlace(picked,b); });
+});
+
+/* ==========================================================
+   GAME 2 — Match them up (tap-to-connect with SVG lines)
+   ========================================================== */
+var L6PAIRS=[
+  {id:'ocean', left:{type:'ocean',nm:'Ocean fish'}, right:{em:'🥤',nm:'Drinks a lot'}},
+  {id:'river', left:{type:'river',nm:'River fish'}, right:{em:'💦',nm:'Pees a lot'}},
+  {id:'salt',  left:{em:'🧂',nm:'Salty water'},     right:{em:'⬅️',nm:'Pulls water OUT'}}
+];
+var l6sel=null, l6done=0, l6lines=[];
+function startL6(){
+  l6sel=null; l6done=0; l6lines=[];
+  $('matchSvg').innerHTML='';
+  var colL=$('colL'), colR=$('colR'); colL.innerHTML=''; colR.innerHTML='';
+  L6PAIRS.forEach(function(p){
+    colL.appendChild(makeNode(p.left,p.id,'L'));
+  });
+  /* shuffle right column so it is a real matching puzzle */
+  shuffle(L6PAIRS.slice()).forEach(function(p){
+    colR.appendChild(makeNode(p.right,p.id,'R'));
+  });
+  Audio_.say('Tap a fish on the left, then tap what it does on the right.');
+}
+function makeNode(data,id,side){
+  var n=document.createElement('div');
+  n.className='node'+(data.type?' node-fish':''); n.tabIndex=0; n.setAttribute('role','button');
+  n.dataset.id=id; n.dataset.side=side;
+  n.setAttribute('aria-label',data.nm);
+  var art = data.type
+    ? '<span class="node-art"><span class="ns-bg">'+underwaterSVG(data.type==='ocean'?'salt':'fresh')+'</span><span class="ns-fish">'+finFish(data.type,'happy')+'</span></span>'
+    : '<span class="em">'+data.em+'</span>';
+  n.innerHTML=art+'<span class="nm">'+data.nm+'</span>';
+  n.addEventListener('click',function(){l6tap(n);});
+  n.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();l6tap(n);}});
+  return n;
+}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=(i*7+3)%(i+1);var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function l6tap(node){
+  if(node.classList.contains('done'))return;
+  if(!l6sel){ l6sel=node; node.classList.add('sel'); Audio_.say(node.querySelector('.nm').textContent); return; }
+  if(l6sel===node){ node.classList.remove('sel'); l6sel=null; return; }
+  if(l6sel.dataset.side===node.dataset.side){ /* re-pick same side */
+    l6sel.classList.remove('sel'); l6sel=node; node.classList.add('sel'); return;
+  }
+  /* one from each side chosen */
+  if(l6sel.dataset.id===node.dataset.id){
+    var la=l6sel; l6lines.push([la,node]); drawLine(la,node);
+    la.classList.remove('sel'); la.classList.add('done'); node.classList.add('done'); l6sel=null;
+    addShell(); Audio_.good(); l6done++;
+    if(l6done>=L6PAIRS.length){ burstConfetti(); toast('Perfect match! One last challenge! 🐟',true);
+      setTimeout(function(){ goTo('s-balance'); startBalance(); },1700); }
+  } else {
+    var a=l6sel; l6sel.classList.remove('sel'); l6sel=null;
+    a.animate([{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'none'}],{duration:280});
+    node.animate([{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'none'}],{duration:280});
+    toast('Not a match — try again!',false,false);
+  }
+}
+function drawLine(a,b,instant){
+  var svg=$('matchSvg'), box=svg.getBoundingClientRect();
+  var ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect();
+  var x1=ra.right-box.left, y1=ra.top+ra.height/2-box.top;
+  var x2=rb.left-box.left,  y2=rb.top+rb.height/2-box.top;
+  var ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+  ln.setAttribute('x1',x1);ln.setAttribute('y1',y1);
+  ln.setAttribute('x2',instant?x2:x1);ln.setAttribute('y2',instant?y2:y1);
+  svg.appendChild(ln);
+  if(instant)return;
+  var t0=null;
+  function grow(ts){ if(!t0)t0=ts; var k=Math.min((ts-t0)/260,1);
+    ln.setAttribute('x2',x1+(x2-x1)*k); ln.setAttribute('y2',y1+(y2-y1)*k);
+    if(k<1)requestAnimationFrame(grow);
+  }
+  requestAnimationFrame(grow);
+}
+function redrawL6(){ var svg=$('matchSvg'); svg.innerHTML=''; l6lines.forEach(function(p){drawLine(p[0],p[1],true);}); }
+
+/* ==========================================================
+   THE BIG SECRET — Balloon fish (osmosis, interactive)
+   One screen that teaches BOTH the mechanism (water in/out) and
+   the behaviour (drink/pee). Tapping a water resizes the fish and
+   states the consequence, so cause → effect lands in one beat.
+   ========================================================== */
+/* ---- osmosis droplets: water streaming OUT of / INTO the fish ----
+   The animated "water moves" effect. mode 'out' = drops radiate from
+   the fish centre (salty pulls water out); 'in' = drops converge onto
+   the fish (fresh pushes water in). Runs until stopDrops() is called. */
+var dropTimers={};
+function stopDrops(key){ if(dropTimers[key]){ clearInterval(dropTimers[key]); dropTimers[key]=null; } }
+function flowDrops(stage, screenId, key, mode, warm){
+  stopDrops(key);
+  function emit(){
+    if(!$(screenId).classList.contains('on')){ stopDrops(key); return; }
+    var W=stage.clientWidth||300, H=stage.clientHeight||200, cx=W/2, cy=H/2, R=Math.min(W,H)*0.44;
+    for(var i=0;i<3;i++){
+      var ang=Math.random()*Math.PI*2;
+      var ex=cx+Math.cos(ang)*R, ey=cy+Math.sin(ang)*(R*0.8);
+      var d=document.createElement('div'); d.className='flowdrop'+(warm?' warm':''); stage.appendChild(d);
+      var a=mode==='out'
+        ? [{transform:'translate('+cx+'px,'+cy+'px) scale(.4)',opacity:0},{opacity:.92,offset:.25},{transform:'translate('+ex+'px,'+ey+'px) scale(1)',opacity:0}]
+        : [{transform:'translate('+ex+'px,'+ey+'px) scale(1)',opacity:0},{opacity:.92,offset:.25},{transform:'translate('+cx+'px,'+cy+'px) scale(.4)',opacity:0}];
+      d.animate(a,{duration:1100,easing:mode==='out'?'ease-out':'ease-in',fill:'forwards'});
+      (function(el){ setTimeout(function(){el.remove();},1180); })(d);
+    }
+  }
+  emit(); dropTimers[key]=setInterval(emit, 560);
+}
+
+/* ---- a directed water stream: droplets travelling from one point in
+   the stage to another (mouth for drinking, downward for peeing) ---- */
+function waterStream(stage, x1f,y1f, x2f,y2f, warm, count, dur){
+  var W=stage.clientWidth||300, H=stage.clientHeight||200;
+  for(var i=0;i<count;i++){
+    var d=document.createElement('div'); d.className='flowdrop'+(warm?' warm':''); stage.appendChild(d);
+    d.animate([
+      {transform:'translate('+(x1f*W)+'px,'+(y1f*H)+'px) scale(.65)',opacity:0},
+      {opacity:.95,offset:.2},
+      {transform:'translate('+(x2f*W)+'px,'+(y2f*H)+'px) scale(1)',opacity:0}
+    ],{duration:dur,delay:i*110,easing:'ease-in',fill:'forwards'});
+    (function(el){ setTimeout(function(){el.remove();},dur+i*110+80); })(d);
+  }
+}
+
+/* ==========================================================
+   THE BIG SECRET — Balloon fish, played as a slow little "film".
+   Tap a water and watch a 3-beat loop: (1) water moves through the
+   holes, (2) the fish reacts — opens wide to DRINK, or lets it out to
+   PEE, (3) the fish is comfy again. Slow + looping = easy to follow.
+   ========================================================== */
+var balloonTried={salt:false,fresh:false}, balloonFilmTimer=null;
+function setBalloonFish(expr,scale){
+  var type=(mode_ === 'fresh')?'river':'ocean';
+  $('balloonFish').innerHTML='<div class="balloon-body" style="transform:scale('+scale+')">'+finFish(type,expr)+'</div>';
+}
+var mode_='salt';
+function stopBalloonFilm(){ clearTimeout(balloonFilmTimer); balloonFilmTimer=null; stopDrops('balloon'); }
+function startBalloon(){
+  balloonTried={salt:false,fresh:false};
+  stopBalloonFilm();
+  $('balloonNext').style.display='none';
+  $('balloonStage').className='fish-stage salt'; mode_='salt';
+  $('balloonHome').innerHTML=underwaterSVG('salt');
+  setBalloonFish('happy',1);
+  $('balloonCap').textContent='Give the fish each water! 👇';
+  document.querySelectorAll('#s-balloon .big-choice').forEach(function(b){b.disabled=false;});
+  Audio_.say('A fish is like a balloon full of water, with tiny holes. Give it salty water, and fresh water.');
+}
+function balloonFilm(kind){
+  stopBalloonFilm();
+  var stage=$('balloonStage');
+  var steps = kind==='salt'
+   ? [ {e:'thirsty', s:0.72, cap:'Salty water pulls water <b>OUT</b> through the tiny holes… 💧', drops:'out',
+        say:'Salty water pulls water out of the fish.'},
+       {e:'drinking',s:0.9,  cap:'So the fish opens wide and <b>gulps the sea</b>! 🥤', drink:true,
+        say:'So the fish drinks the salty water. Gulp, gulp!'},
+       {e:'excited', s:1.06, cap:'Filled up again! Ocean fish <b>DRINKS a LOT</b> 🥤', say:'All full! The ocean fish drinks a lot.'} ]
+   : [ {e:'full',    s:1.3,  cap:'Fresh water pushes <b>IN</b> through the tiny holes… 💧', drops:'in',
+        say:'Fresh water pushes into the fish.'},
+       {e:'surprised',s:1.14,cap:'Too full! So it lets the extra out… 💦', pee:true,
+        say:'The fish is too full, so it pees the extra out.'},
+       {e:'happy',   s:1.0,  cap:'All comfy again! River fish <b>PEES a LOT</b> 💦', say:'All better! The river fish pees a lot.'} ];
+  var i=0;
+  function tick(){
+    if(!$('s-balloon').classList.contains('on')){ stopBalloonFilm(); return; }
+    var st=steps[i%steps.length];
+    setBalloonFish(st.e, st.s);
+    $('balloonCap').innerHTML=st.cap;
+    if(st.drops){ flowDrops(stage,'s-balloon','balloon',st.drops); }
+    else { stopDrops('balloon'); }
+    if(st.drink){ waterStream(stage,0.16,0.5, 0.44,0.62, false, 6, 1100); }
+    if(st.pee){ waterStream(stage,0.5,0.62, 0.62,0.98, true, 6, 1100); }
+    if(i<steps.length) Audio_.say(st.say);   /* narrate once through, then loop silently */
+    i++;
+    balloonFilmTimer=setTimeout(tick, 1800);
+  }
+  tick();
+}
+$('btnSalt').addEventListener('click',function(){
+  mode_='salt';
+  $('balloonStage').className='fish-stage salt'; $('balloonHome').innerHTML=underwaterSVG('salt');
+  Audio_.good(); balloonFilm('salt');
+  balloonTried.salt=true; checkBalloon();
+});
+$('btnFresh').addEventListener('click',function(){
+  mode_='fresh';
+  $('balloonStage').className='fish-stage fresh'; $('balloonHome').innerHTML=underwaterSVG('fresh');
+  Audio_.good(); balloonFilm('fresh');
+  balloonTried.fresh=true; checkBalloon();
+});
+function checkBalloon(){
+  if(balloonTried.salt&&balloonTried.fresh&&$('balloonNext').style.display==='none'){
+    $('balloonNext').style.display='block'; addShell(); burstConfetti();
+  }
+}
+$('balloonNext').addEventListener('click',function(){ stopBalloonFilm(); goTo('s-salt'); startSalt(); });
+
+/* ==========================================================
+   GAME ① — Follow the salt (the RULE, made visible)
+   Water always sneaks toward the SALTIER side to even things out.
+   Salt crystals are shown on both sides as the clue; the child counts
+   and predicts the direction, then watches water flow to the saltier
+   side. This is the "why" behind drink/pee — not two memorised facts.
+   ========================================================== */
+var SALT=[
+  {place:'the ocean', water:'salt', inside:2, outside:6, ans:'out',
+   q:'Count the salt 🧂 — more <b>on the fish</b>, or <b>in the water</b>?',
+   cap:'Tap the saltier side, or pick a way below 👇',
+   teach:'The water is saltier → water sneaks OUT → the fish must <b>DRINK</b> 🥤',
+   say:'Count the salt. There is more in the water, so water sneaks out and the fish drinks.'},
+  {place:'the river', water:'fresh', inside:3, outside:0, ans:'in',
+   q:'This river has <b>no salt</b> at all! Which way will the water go?',
+   cap:'The fish or the water — who has more salt? 🧂',
+   teach:'The fish is saltier → water sneaks IN → the fish <b>PEES</b> 💦',
+   say:'The river has no salt, but the fish does. So water sneaks in and the fish pees.'},
+];
+var saltI=0, saltAnswered=false;
+function grainRow(n){ var s=''; for(var i=0;i<n;i++) s+='<b class="grain"></b>'; return s; }
+function startSalt(){ saltI=0; saltShow(); }
+function saltShow(){
+  var it=SALT[saltI];
+  stopDrops('salt');
+  $('saltStage').className='fish-stage '+it.water;
+  $('saltHome').innerHTML=underwaterSVG(it.water);
+  $('saltFish').innerHTML='<div style="width:clamp(220px,46vw,340px)">'+finFish(it.water==='salt'?'ocean':'river','curious')+'</div>';
+  $('saltq').innerHTML=it.q;
+  $('saltInG').innerHTML=grainRow(it.inside);
+  $('saltOutG').innerHTML=grainRow(it.outside);
+  /* Show the salt WHERE it is: crystals sitting on the fish's body (inside)
+     vs crystals floating in the water (outside). A child compares the two
+     areas by eye — more crystals on that side = saltier = water goes there. */
+  var cloud=$('saltCloud'), W=cloud.clientWidth||300, H=cloud.clientHeight||190;
+  var cx=W/2, cy=H/2, html='<span class="salt-inside-ring"></span>';
+  function g(x,y,cls,i){ return '<b class="grain '+cls+'" style="left:'+x.toFixed(0)+'px;top:'+y.toFixed(0)+'px;animation-delay:'+(i*0.15).toFixed(1)+'s"></b>'; }
+  for(var i=0;i<it.inside;i++){                       /* crystals spread across the fish's body */
+    var ax=(Math.random()*2-1)*W*0.14, ay=(Math.random()*2-1)*H*0.13;
+    html+=g(cx+ax-6, cy+4+ay-6, 'in', i);
+  }
+  var placed=0, tries=0;                              /* crystals in the WATER (away from the fish) */
+  while(placed<it.outside && tries<300){
+    tries++;
+    var x=14+Math.random()*(W-40), y=22+Math.random()*(H-72);
+    if(Math.abs(x-cx)<W*0.22 && Math.abs(y-cy)<H*0.30) continue;
+    html+=g(x,y,'out',placed); placed++;
+  }
+  cloud.innerHTML=html;
+  $('saltCap').innerHTML=it.cap;
+  saltAnswered=false;
+  document.querySelectorAll('#s-salt .big-choice').forEach(function(b){ b.disabled=false; b.classList.remove('right','wrong'); b.className='big-choice '+(b.dataset.dir==='in'?'yes':'no'); });
+  $('saltIn').classList.remove('chosen','miss'); $('saltOut').classList.remove('chosen','miss');
+  $('saltNext').style.display='none';
+  Audio_.say(it.q.replace(/<[^>]+>/g,''));
+}
+/* Two ways to answer keeps it fresh: predict the direction with the OUT/IN
+   buttons, OR tap the saltier side directly (the 🐟 fish / 🌊 water badge). */
+function saltAnswer(dir, srcEl){
+  if(saltAnswered)return;
+  var it=SALT[saltI], badge=srcEl&&srcEl.classList.contains('count-badge');
+  if(dir===it.ans){
+    saltAnswered=true;
+    document.querySelectorAll('#s-salt .big-choice').forEach(function(b){b.disabled=true;});
+    if(srcEl) srcEl.classList.add(badge?'chosen':'right');
+    flowDrops($('saltStage'),'s-salt','salt',it.ans);
+    $('saltFish').innerHTML='<div style="width:clamp(220px,46vw,340px)">'+finFish(it.water==='salt'?'ocean':'river',it.ans==='out'?'thirsty':'full')+'</div>';
+    $('saltCap').innerHTML=it.teach;
+    addShell(); burstConfetti(); toast('Water follows the salt! 🧂',true,false); Audio_.say(it.say);
+    $('saltNext').style.display='block';
+  } else {
+    if(srcEl){ srcEl.classList.add(badge?'miss':'wrong'); setTimeout(function(){srcEl.classList.remove('wrong','miss');},500); }
+    toast('Look again — water goes to where there is MORE salt.',false);
+  }
+}
+document.querySelectorAll('#s-salt .big-choice').forEach(function(btn){
+  btn.addEventListener('click',function(){ if(!btn.disabled) saltAnswer(btn.dataset.dir, btn); });
+});
+$('saltIn').addEventListener('click',function(){ saltAnswer('in', this); });    /* fish saltier → water comes IN */
+$('saltOut').addEventListener('click',function(){ saltAnswer('out', this); });  /* water saltier → water goes OUT */
+$('saltNext').addEventListener('click',function(){
+  stopDrops('salt'); saltI++;
+  if(saltI>=SALT.length){ goTo('s-feed'); startFeed(); }
+  else saltShow();
+});
+
+/* ==========================================================
+   GAME — Give the ocean fish a drink (hold / tap to pour)
+   Salty water keeps pulling water OUT (drops leave + meter drains);
+   the child pours seawater IN to fill the tummy meter. Doing the
+   behaviour = remembering "ocean fish drink a LOT".
+   ========================================================== */
+var feedLevel=0, feedTimer=null, feedHold=null, feedDone=false, feedDrinkUntil=0;
+function renderFeed(){
+  var lv=feedLevel;
+  var drinking = !feedDone && Date.now()<feedDrinkUntil && lv<98;
+  var expr = feedDone?'excited':(drinking?'drinking':(lv<42?'thirsty':(lv>82?'full':'happy')));
+  var scale=(0.72+lv/100*0.5).toFixed(3);
+  $('feedFish').innerHTML='<div class="balloon-body" style="transform:scale('+scale+')">'+finFish('ocean',expr)+'</div>';
+  $('feedMeter').firstElementChild.style.height=lv+'%';
+  $('feedMeter').classList.toggle('full',lv>=98);
+  $('feedCap').innerHTML = feedDone ? 'Full and happy! Ocean fish drinks a <b>LOT</b> 🥤'
+    : (lv<42?'Thirsty! Tap the cup 🥤':'Keep pouring — nearly full! 🥤');
+}
+function startFeed(){
+  feedDone=false; feedLevel=30;
+  $('feedStage').className='fish-stage salt';
+  $('feedHome').innerHTML=underwaterSVG('salt');
+  $('feedNext').style.display='none'; $('feedBtn').disabled=false;
+  renderFeed();
+  flowDrops($('feedStage'),'s-feed','feed','out');   /* salty sea pulling water out */
+  clearInterval(feedTimer); feedTimer=setInterval(feedTick,70);
+  Audio_.say('The salty sea pulls water out of the fish. Tap the cup a lot to help the ocean fish drink!');
+}
+function feedTick(){
+  if(!$('s-feed').classList.contains('on')){ clearInterval(feedTimer); stopDrops('feed'); return; }
+  if(feedDone)return;
+  feedLevel=Math.max(0,feedLevel-0.7);
+  renderFeed();
+}
+function feedPour(){
+  if(feedDone)return;
+  feedLevel=Math.min(100,feedLevel+8);
+  feedDrinkUntil=Date.now()+260;                     /* keep the mouth open while gulping */
+  waterStream($('feedStage'),0.16,0.5, 0.44,0.62, false, 2, 620);  /* water into the mouth */
+  if(feedLevel>=98){ feedWin(); } else { renderFeed(); }
+}
+function feedWin(){
+  feedDone=true; clearInterval(feedTimer); clearInterval(feedHold); stopDrops('feed');
+  renderFeed(); $('feedBtn').disabled=true;
+  addShell(); burstConfetti(); toast('Ocean fish drinks a LOT! 🥤',true);
+  $('feedNext').style.display='block';
+}
+(function(){
+  var b=$('feedBtn');
+  b.addEventListener('pointerdown',function(e){ e.preventDefault(); feedPour(); clearInterval(feedHold); feedHold=setInterval(feedPour,150); });
+  ['pointerup','pointerleave','pointercancel'].forEach(function(ev){ b.addEventListener(ev,function(){ clearInterval(feedHold); }); });
+  b.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); feedPour(); } });
+})();
+$('feedNext').addEventListener('click',function(){ goTo('s-pee'); startPee(); });
+
+/* ==========================================================
+   GAME — Help the river fish pee (tap the water drops)
+   Fresh water keeps pushing IN (drops arrive + fish puffs); the child
+   taps floating drops to "pee" them out until the fish is comfy again.
+   ========================================================== */
+var peePopped=0, peeTarget=8, peeDone=false;
+function setPeeFish(expr,scale){
+  $('peeFish').innerHTML='<div class="balloon-body" style="transform:scale('+scale+')">'+finFish('river',expr)+'</div>';
+}
+/* a clearly visible little pee stream squirting out of the fish's back */
+function peeSquirt(){
+  var stage=$('peeStage'), W=stage.clientWidth||300, H=stage.clientHeight||200;
+  for(var i=0;i<6;i++){
+    var d=document.createElement('div'); d.className='flowdrop warm'; stage.appendChild(d);
+    var sx=W*0.5, sy=H*0.62, ex=W*(0.56+Math.random()*0.16), ey=H*(0.93+Math.random()*0.09);
+    d.animate([
+      {transform:'translate('+sx+'px,'+sy+'px) scale(.5)',opacity:0},
+      {opacity:1,offset:.15},
+      {transform:'translate('+ex+'px,'+ey+'px) scale(1.15)',opacity:0}
+    ],{duration:720,delay:i*55,easing:'ease-in',fill:'forwards'});
+    (function(el){ setTimeout(function(){el.remove();},800+i*55); })(d);
+  }
+}
+function startPee(){
+  peeDone=false; peePopped=0;
+  $('peeStage').className='fish-stage fresh tappable';
+  $('peeHome').innerHTML=underwaterSVG('fresh');
+  $('peeNext').style.display='none';
+  $('peeHint').style.display='';
+  $('peeCount').textContent='💦 0 / '+peeTarget;
+  setPeeFish('full',1.28);
+  $('peeCap').innerHTML='Too full! <b>Tap the fish</b> to pee 💦';
+  flowDrops($('peeStage'),'s-pee','pee','in');   /* fresh water pushing in */
+  Audio_.say('Fresh water fills the river fish too full. Tap the fish to help it pee a lot!');
+}
+function peeTap(){
+  if(peeDone)return;
+  peePopped++;
+  $('peeHint').style.display='none';
+  $('peeCount').textContent='💦 '+Math.min(peePopped,peeTarget)+' / '+peeTarget;
+  var sc=Math.max(1,(1.28-peePopped*0.035)).toFixed(3);
+  setPeeFish(peePopped>=peeTarget?'excited':'surprised',sc);
+  peeSquirt(); Audio_.good();
+  if(peePopped>=peeTarget){ peeWin(); }
+  else { $('peeCap').innerHTML='Pee! Keep tapping the fish 💦'; }
+}
+$('peeStage').addEventListener('pointerdown',function(){ if($('s-pee').classList.contains('on')) peeTap(); });
+function peeWin(){
+  peeDone=true; stopDrops('pee'); $('peeStage').classList.remove('tappable');
+  setPeeFish('excited',1);
+  $('peeCap').innerHTML='Phew! River fish pees a <b>LOT</b> 💦';
+  addShell(); burstConfetti(); toast('River fish pees a LOT! 💦',true);
+  $('peeNext').style.display='block';
+}
+$('peeNext').addEventListener('click',function(){ goTo('s-l6'); startL6(); });
+
+/* ==========================================================
+   GAME ③ — Keep the fish just right (apply the rule)
+   Each water makes the fish's water level DRIFT: salty water drains it
+   (drink to top up), fresh water fills it (pee to let out). The child
+   reads the water, taps the matching action, and holds the level in the
+   green "just right" zone. Doing it = the rule becomes a reflex.
+   ========================================================== */
+var BAL=[
+  {place:'the salty ocean', water:'salt', short:'🧂 Ocean',
+   q:'Salty ocean! The water keeps draining — top the fish up 🥤',
+   intro:'This is the salty ocean. Water keeps draining out, so tap drink to keep the fish full.'},
+  {place:'the fresh river', water:'fresh', short:'💧 River',
+   q:'Fresh river now! It keeps filling up — let some out 💦',
+   intro:'Now a fresh river. It keeps filling the fish, so tap pee to let some out.'},
+  {place:'the salty sea', water:'salt', short:'🧂 Sea',
+   q:'Salty water again — you know the trick! ⚖️',
+   intro:'Salty water again. You know what to do to keep it just right.'},
+  {place:'the fresh lake', water:'fresh', short:'💧 Lake',
+   q:'Last one — a calm fresh lake 💧',
+   intro:'A calm fresh lake for the last one. Keep the fish nice and comfy!'}
+];
+var GREEN_LO=38, GREEN_HI=68, GREEN_GOAL=1400, BAL_TICK=80;
+var balI=0, balLevel=50, balTimer=null, balGreen=0, balRoundDone=false;
+function balInGreen(){ return balLevel>=GREEN_LO && balLevel<=GREEN_HI; }
+function balDrift(){ return BAL[balI].water==='salt' ? -0.55 : 0.55; }  /* salty drains, fresh fills */
+function balRender(){
+  var lv=balLevel, it=BAL[balI], type=it.water==='salt'?'ocean':'river', good=balInGreen();
+  var expr = balRoundDone?'excited':(good?'happy':(lv<GREEN_LO?'thirsty':'full'));
+  var scale=(0.74+lv/100*0.5).toFixed(3);
+  $('balFish').innerHTML='<div class="balloon-body" style="transform:scale('+scale+')">'+finFish(type,expr)+'</div>';
+  $('balFill').style.height=lv+'%';
+  $('balComfort').classList.toggle('good',good);
+  var cap;
+  /* the caption always points to the action THIS water needs — never the
+     opposite — so "drink for salty, pee for fresh" stays crystal clear. */
+  if(balRoundDone){ cap='Just right! 😄 The fish is comfy'; }
+  else if(good){ cap='Just right! Keep it green 😄'; }
+  else if(it.water==='salt'){ cap=(lv<GREEN_LO)?'Salty water pulls it down! Tap <b>DRINK</b> 🥤':'Whoa, too full — let it settle 💧'; }
+  else { cap=(lv>GREEN_HI)?'Fresh water fills it up! Tap <b>PEE</b> 💦':'A little low — let it settle 💧'; }
+  $('balCap').innerHTML=cap;
+}
+function startBalance(){ balI=0; balShowRound(); }
+function balShowRound(){
+  var it=BAL[balI];
+  balRoundDone=false; balGreen=0;
+  balLevel = it.water==='salt' ? 26 : 82;   /* start in the "bad" state the water causes */
+  $('balStage').className='fish-stage '+it.water;
+  $('balHome').innerHTML=underwaterSVG(it.water);
+  $('balRound').textContent=it.short+'  ('+(balI+1)+'/'+BAL.length+')';
+  $('balq').innerHTML=it.q;
+  $('balNext').style.display='none';
+  document.querySelectorAll('#s-balance .big-choice').forEach(function(b){ b.disabled=false; b.classList.remove('hintpulse'); });
+  /* gentle hint on the very first round: pulse the button that fights the drift */
+  if(balI===0){ $(it.water==='salt'?'balDrink':'balPee').classList.add('hintpulse'); }
+  balRender();
+  clearInterval(balTimer); balTimer=setInterval(balTick,BAL_TICK);
+  Audio_.say(it.intro);
+}
+function balTick(){
+  if(!$('s-balance').classList.contains('on')){ clearInterval(balTimer); return; }
+  if(balRoundDone)return;
+  balLevel=Math.max(0,Math.min(100,balLevel+balDrift()));
+  if(balInGreen()){ balGreen+=BAL_TICK; if(balGreen>=GREEN_GOAL){ balRoundWin(); return; } }
+  else { balGreen=Math.max(0,balGreen-BAL_TICK*0.8); }
+  balRender();
+}
+function balAct(delta, kind){
+  if(balRoundDone)return;
+  var it=BAL[balI], nl=balLevel+delta;
+  /* clamp the CORRECT action to the green edge so eager tapping parks the
+     fish safely inside the zone (always winnable); the WRONG action stays
+     unclamped so a mismatched tap visibly pushes the fish out of comfort. */
+  if(it.water==='salt' && kind==='drink'){ nl=Math.min(nl,GREEN_HI); }
+  if(it.water==='fresh'&& kind==='pee'){ nl=Math.max(nl,GREEN_LO); }
+  balLevel=Math.max(0,Math.min(100,nl));
+  document.querySelectorAll('#s-balance .big-choice').forEach(function(b){b.classList.remove('hintpulse');});
+  if(kind==='drink'){ waterStream($('balStage'),0.16,0.5, 0.44,0.62, false, 2, 560); }
+  else { waterStream($('balStage'),0.5,0.62, 0.6,0.98, true, 2, 560); }
+  balRender();
+}
+$('balDrink').addEventListener('click',function(){ balAct(11,'drink'); });
+$('balPee').addEventListener('click',function(){ balAct(-11,'pee'); });
+function balRoundWin(){
+  balRoundDone=true; clearInterval(balTimer); stopDrops('bal');
+  document.querySelectorAll('#s-balance .big-choice').forEach(function(b){b.disabled=true;});
+  balRender(); addShell(); burstConfetti(); toast('Just right! 😄',true,false); Audio_.good();
+  balI++;
+  $('balNext').style.display='block';
+  $('balNext').textContent = (balI>=BAL.length) ? 'Finish ▶' : 'Next fish ▶';
+}
+$('balNext').addEventListener('click',function(){
+  if(balI>=BAL.length){ goTo('s-win'); showWin(); } else { balShowRound(); }
+});
+
+/* ==========================================================
+   LEVEL 7 — Win / certificate
+   ========================================================== */
+function showWin(){
+  $('winFinn').innerHTML=fishSVG({body:'#ee7355',belly:'#f6b8a4',glasses:true});
+  Audio_.win();
+  setTimeout(function(){ Audio_.say('You did it! Ocean fish drink a lot. River fish pee a lot. You are a fish scientist!'); },700);
+  burstConfetti(); setTimeout(burstConfetti,600);
+}
+$('hearWin').addEventListener('click',function(){
+  Audio_.say('The secret! Ocean fish drink a lot, because salty water pulls water out. River fish pee a lot, because fresh water pushes in.');
+});
+$('printCert').addEventListener('click',function(){ window.print(); });
+$('playAgain').addEventListener('click',function(){
+  shells=0; buildSlots();
+  goTo('s-start');
+});
+$('certName').addEventListener('focus',function(){ if(this.value==='My Name')this.value=''; });
+$('certName').addEventListener('blur',function(){ if(this.value.trim()==='')this.value='My Name'; });
+
+/* ==========================================================
+   Global wiring — hear buttons, mute, start, bubbles, init
+   ========================================================== */
+document.querySelectorAll('.hear').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var el=$(btn.dataset.hear); if(!el)return;
+    Audio_.say(el.textContent.replace(/\s+/g,' ').trim());
+  });
+});
+$('muteBtn').addEventListener('click',function(){
+  var m=Audio_.toggle();
+  this.textContent=m?'🔇':'🔊';
+  this.classList.toggle('on',!m);
+});
+$('playBtn').addEventListener('click',function(){
+  Audio_.prime();
+  goTo('s-learn');
+  startLearn();
+});
+
+/* ambient bubbles */
+(function(){
+  var box=$('seaBubbles');
+  for(var i=0;i<14;i++){
+    var b=document.createElement('i');
+    var sz=8+((i*13)%26);
+    b.style.width=sz+'px'; b.style.height=sz+'px';
+    b.style.left=((i*7.3)%98)+'%';
+    b.style.animationDuration=(9+((i*3)%12))+'s';
+    b.style.animationDelay=(-(i*1.7))+'s';
+    box.appendChild(b);
+  }
+})();
+
+/* init */
+$('headFinn').innerHTML=fishSVG({body:'#ee7355',belly:'#f6b8a4',glasses:true});
+$('bigFinn').innerHTML=fishSVG({body:'#ee7355',belly:'#f6b8a4',glasses:true});
+document.querySelectorAll('.say .finn').forEach(function(el){el.innerHTML=fishSVG({body:'#ee7355',belly:'#f6b8a4',glasses:true});});
+buildSlots();
+/* keep match lines correct if the window resizes mid-game */
+window.addEventListener('resize',function(){
+  if($('s-l6').classList.contains('on')) redrawL6();
+});
+</script>
+</body>
+</html>

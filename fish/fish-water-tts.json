@@ -1,0 +1,388 @@
+{
+  "clips": [
+    {
+      "id": "learn-question",
+      "text": "Water can be salty or fresh. Tap each one!",
+      "created": true,
+      "file": "learn-question-48c37d0c.wav"
+    },
+    {
+      "id": "learn-intro",
+      "text": "Water can be salty, or fresh. Tap each one to learn.",
+      "created": true,
+      "file": "learn-intro-7216252f.wav"
+    },
+    {
+      "id": "learn-salt",
+      "text": "Salt water. Oceans and seas are full of salt. It is too salty to drink!",
+      "created": true,
+      "file": "learn-salt-a6849f1a.wav"
+    },
+    {
+      "id": "learn-fresh",
+      "text": "Fresh water. Rivers, lakes and rain. This is the clean water we can drink.",
+      "created": true,
+      "file": "learn-fresh-800964d8.wav"
+    },
+    {
+      "id": "sort-question",
+      "text": "Drag each place to the right water. Salt or fresh?",
+      "created": true,
+      "file": "sort-question-e306c9fb.wav"
+    },
+    {
+      "id": "sort-intro",
+      "text": "Drag each place into salt water or fresh water.",
+      "created": true,
+      "file": "sort-intro-d5c33e1b.wav"
+    },
+    {
+      "id": "sort-finish",
+      "text": "All sorted! You are a water expert!",
+      "created": true,
+      "file": "sort-finish-e70c27fe.wav"
+    },
+    {
+      "id": "sort-ocean",
+      "text": "Ocean. Now tap salt water or fresh water.",
+      "created": true,
+      "file": "sort-ocean-15a1189a.wav"
+    },
+    {
+      "id": "sort-river",
+      "text": "River. Now tap salt water or fresh water.",
+      "created": true,
+      "file": "sort-river-7d6e290c.wav"
+    },
+    {
+      "id": "sort-sea",
+      "text": "Sea. Now tap salt water or fresh water.",
+      "created": true,
+      "file": "sort-sea-4a929927.wav"
+    },
+    {
+      "id": "sort-lake",
+      "text": "Lake. Now tap salt water or fresh water.",
+      "created": true,
+      "file": "sort-lake-2929eb68.wav"
+    },
+    {
+      "id": "sort-rain",
+      "text": "Rain. Now tap salt water or fresh water.",
+      "created": true,
+      "file": "sort-rain-dfbc197a.wav"
+    },
+    {
+      "id": "sort-waves",
+      "text": "Waves. Now tap salt water or fresh water.",
+      "created": true,
+      "file": "sort-waves-15923605.wav"
+    },
+    {
+      "id": "sort-ocean-picked",
+      "text": "Ocean picked. Tap a bucket.",
+      "created": true,
+      "file": "sort-ocean-picked-3dc4e13e.wav"
+    },
+    {
+      "id": "sort-river-picked",
+      "text": "River picked. Tap a bucket.",
+      "created": true,
+      "file": "sort-river-picked-cdbb703e.wav"
+    },
+    {
+      "id": "sort-sea-picked",
+      "text": "Sea picked. Tap a bucket.",
+      "created": true,
+      "file": "sort-sea-picked-d19735e7.wav"
+    },
+    {
+      "id": "sort-lake-picked",
+      "text": "Lake picked. Tap a bucket.",
+      "created": true,
+      "file": "sort-lake-picked-ab3297aa.wav"
+    },
+    {
+      "id": "sort-rain-picked",
+      "text": "Rain picked. Tap a bucket.",
+      "created": true,
+      "file": "sort-rain-picked-630199a5.wav"
+    },
+    {
+      "id": "sort-waves-picked",
+      "text": "Waves picked. Tap a bucket.",
+      "created": true,
+      "file": "sort-waves-picked-1648e74f.wav"
+    },
+    {
+      "id": "sort-ocean-wrong",
+      "text": "Ocean is salt water. Try the other one!",
+      "created": true,
+      "file": "sort-ocean-wrong-baca9a49.wav"
+    },
+    {
+      "id": "sort-river-wrong",
+      "text": "River is fresh water. Try the other one!",
+      "created": true,
+      "file": "sort-river-wrong-3f4515d8.wav"
+    },
+    {
+      "id": "sort-sea-wrong",
+      "text": "Sea is salt water. Try the other one!",
+      "created": true,
+      "file": "sort-sea-wrong-9cd5909e.wav"
+    },
+    {
+      "id": "sort-lake-wrong",
+      "text": "Lake is fresh water. Try the other one!",
+      "created": true,
+      "file": "sort-lake-wrong-2eb7942d.wav"
+    },
+    {
+      "id": "sort-rain-wrong",
+      "text": "Rain is fresh water. Try the other one!",
+      "created": true,
+      "file": "sort-rain-wrong-c46c3428.wav"
+    },
+    {
+      "id": "sort-waves-wrong",
+      "text": "Waves is salt water. Try the other one!",
+      "created": true,
+      "file": "sort-waves-wrong-1a607838.wav"
+    },
+    {
+      "id": "match-question",
+      "text": "Tap a fish, then tap what it does. Draw a line!",
+      "created": true,
+      "file": "match-question-fe764fb1.wav"
+    },
+    {
+      "id": "match-intro",
+      "text": "Tap a fish on the left, then tap what it does on the right.",
+      "created": true,
+      "file": "match-intro-7e189eae.wav"
+    },
+    {
+      "id": "match-ocean-fish",
+      "text": "Ocean fish",
+      "created": true,
+      "file": "match-ocean-fish-bd6f32e1.wav"
+    },
+    {
+      "id": "match-river-fish",
+      "text": "River fish",
+      "created": true,
+      "file": "match-river-fish-cdc7c78b.wav"
+    },
+    {
+      "id": "match-drinks",
+      "text": "Drinks a lot",
+      "created": true,
+      "file": "match-drinks-623d286e.wav"
+    },
+    {
+      "id": "match-pees",
+      "text": "Pees a lot",
+      "created": true,
+      "file": "match-pees-35d0ed7e.wav"
+    },
+    {
+      "id": "match-salty",
+      "text": "Salty water",
+      "created": true,
+      "file": "match-salty-3b44ba87.wav"
+    },
+    {
+      "id": "match-pulls-out",
+      "text": "Pulls water OUT",
+      "created": true,
+      "file": "match-pulls-out-5a592b89.wav"
+    },
+    {
+      "id": "match-finish",
+      "text": "Perfect match! One last challenge!",
+      "created": true,
+      "file": "match-finish-84f47fbc.wav"
+    },
+    {
+      "id": "balloon-question",
+      "text": "A fish is like a balloon full of water, with tiny holes. Give it each water!",
+      "created": true,
+      "file": "balloon-question-213d0539.wav"
+    },
+    {
+      "id": "balloon-intro",
+      "text": "A fish is like a balloon full of water, with tiny holes. Give it salty water, and fresh water.",
+      "created": true,
+      "file": "balloon-intro-f084a87c.wav"
+    },
+    {
+      "id": "balloon-salt-out",
+      "text": "Salty water pulls water out of the fish.",
+      "created": true,
+      "file": "balloon-salt-out-e497dc7e.wav"
+    },
+    {
+      "id": "balloon-salt-drink",
+      "text": "So the fish drinks the salty water. Gulp, gulp!",
+      "created": true,
+      "file": "balloon-salt-drink-5d92c8fb.wav"
+    },
+    {
+      "id": "balloon-salt-full",
+      "text": "All full! The ocean fish drinks a lot.",
+      "created": true,
+      "file": "balloon-salt-full-6cec0d5e.wav"
+    },
+    {
+      "id": "balloon-fresh-in",
+      "text": "Fresh water pushes into the fish.",
+      "created": true,
+      "file": "balloon-fresh-in-3ef7c14e.wav"
+    },
+    {
+      "id": "balloon-fresh-pee",
+      "text": "The fish is too full, so it pees the extra out.",
+      "created": true,
+      "file": "balloon-fresh-pee-85860840.wav"
+    },
+    {
+      "id": "balloon-fresh-comfy",
+      "text": "All better! The river fish pees a lot.",
+      "created": true,
+      "file": "balloon-fresh-comfy-74aa0605.wav"
+    },
+    {
+      "id": "salt-question",
+      "text": "Water sneaks to the saltier side! Count the salt — which way will it go?",
+      "created": true,
+      "file": "salt-question-7942a1f7.wav"
+    },
+    {
+      "id": "salt-ocean-question",
+      "text": "Count the salt — more on the fish, or in the water?",
+      "created": true,
+      "file": "salt-ocean-question-8e6d38a9.wav"
+    },
+    {
+      "id": "salt-ocean-answer",
+      "text": "Count the salt. There is more in the water, so water sneaks out and the fish drinks.",
+      "created": true,
+      "file": "salt-ocean-answer-a1ba8a88.wav"
+    },
+    {
+      "id": "salt-river-question",
+      "text": "This river has no salt at all! Which way will the water go?",
+      "created": true,
+      "file": "salt-river-question-2bd2c618.wav"
+    },
+    {
+      "id": "salt-river-answer",
+      "text": "The river has no salt, but the fish does. So water sneaks in and the fish pees.",
+      "created": true,
+      "file": "salt-river-answer-08248924.wav"
+    },
+    {
+      "id": "salt-correct",
+      "text": "Water follows the salt!",
+      "created": true,
+      "file": "salt-correct-331d3542.wav"
+    },
+    {
+      "id": "salt-wrong",
+      "text": "Look again — water goes to where there is MORE salt.",
+      "created": true,
+      "file": "salt-wrong-3afab2bc.wav"
+    },
+    {
+      "id": "feed-question",
+      "text": "The salty sea pulls water OUT! Tap the cup a lot to help the fish drink.",
+      "created": true,
+      "file": "feed-question-fb5786e4.wav"
+    },
+    {
+      "id": "feed-intro",
+      "text": "The salty sea pulls water out of the fish. Tap the cup a lot to help the ocean fish drink!",
+      "created": true,
+      "file": "feed-intro-4193e0f8.wav"
+    },
+    {
+      "id": "feed-finish",
+      "text": "Ocean fish drinks a LOT!",
+      "created": true,
+      "file": "feed-finish-1566d7fa.wav"
+    },
+    {
+      "id": "pee-question",
+      "text": "Fresh water fills the fish too full! Tap the fish to squirt the extra water out.",
+      "created": true,
+      "file": "pee-question-2c55ca66.wav"
+    },
+    {
+      "id": "pee-intro",
+      "text": "Fresh water fills the river fish too full. Tap the fish to help it pee a lot!",
+      "created": true,
+      "file": "pee-intro-c369470f.wav"
+    },
+    {
+      "id": "pee-finish",
+      "text": "River fish pees a LOT!",
+      "created": true,
+      "file": "pee-finish-74f1c0fc.wav"
+    },
+    {
+      "id": "balance-question",
+      "text": "Read the water! Keep the fish in the green zone.",
+      "created": true,
+      "file": "balance-question-be7472c4.wav"
+    },
+    {
+      "id": "balance-ocean",
+      "text": "This is the salty ocean. Water keeps draining out, so tap drink to keep the fish full.",
+      "created": true,
+      "file": "balance-ocean-ea73897d.wav"
+    },
+    {
+      "id": "balance-river",
+      "text": "Now a fresh river. It keeps filling the fish, so tap pee to let some out.",
+      "created": true,
+      "file": "balance-river-10a5a61e.wav"
+    },
+    {
+      "id": "balance-sea",
+      "text": "Salty water again. You know what to do to keep it just right.",
+      "created": true,
+      "file": "balance-sea-badcd00a.wav"
+    },
+    {
+      "id": "balance-lake",
+      "text": "A calm fresh lake for the last one. Keep the fish nice and comfy!",
+      "created": true,
+      "file": "balance-lake-97a1bd2c.wav"
+    },
+    {
+      "id": "balance-finish",
+      "text": "Just right!",
+      "created": true,
+      "file": "balance-finish-3dbc22a6.wav"
+    },
+    {
+      "id": "win",
+      "text": "You did it! Ocean fish drink a lot. River fish pee a lot. You are a fish scientist!",
+      "created": true,
+      "file": "win-fa7dee48.wav"
+    },
+    {
+      "id": "win-secret",
+      "text": "The secret! Ocean fish drink a lot, because salty water pulls water out. River fish pee a lot, because fresh water pushes in.",
+      "created": true,
+      "file": "win-secret-47871b6e.wav"
+    },
+    {
+      "id": "match-wrong",
+      "text": "Not a match — try again!",
+      "created": true,
+      "file": "match-wrong-e4d42775.wav"
+    }
+  ]
+}
