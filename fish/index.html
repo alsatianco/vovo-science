@@ -35,13 +35,14 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
+html,body{height:100%;min-height:100%}
 body{
   font-family:var(--font-body);
   color:var(--ink);
   /* the "desk": an underwater backdrop the booklet page floats on */
   background:
     linear-gradient(180deg,#5aa9d8 0%,#3d86c0 24%,#276ba6 50%,#175a92 76%,#0f4272 100%);
+  min-height:100vh;
   min-height:100dvh;
   display:flex;align-items:center;justify-content:center;
   padding:14px;
@@ -68,7 +69,11 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outl
 .book{
   position:relative;z-index:1;
   width:min(880px,97%);
-  min-height:min(94dvh,940px);
+  /* Keep the complete booklet inside the visible viewport when possible.
+     The previous 94dvh minimum did not account for the body's 28px padding,
+     which could push the bottom of taller iPad landscape screens out of view. */
+  min-height:min(calc(100vh - 28px),940px);
+  min-height:min(calc(100dvh - 28px),940px);
   background:var(--paper);
   border-radius:26px;
   box-shadow:0 22px 55px rgba(6,28,52,.42), var(--shadow), inset 0 0 0 2px #fff8;
@@ -104,6 +109,9 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outl
   font-size:19px;box-shadow:var(--shadow-sm);transition:transform .12s}
 .iconbtn:active{transform:scale(.9)}
 .iconbtn.on{background:var(--gold);}
+.iconbtn[hidden]{display:none}
+.home-btn{flex:none;text-decoration:none}
+.iconbtn svg{width:21px;height:21px;display:block;fill:currentColor}
 
 /* progress: a shell tray that fills as you learn */
 .tray{display:flex;align-items:center;gap:8px;margin:12px 0 6px;position:relative;z-index:3}
@@ -448,6 +456,21 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outl
   .book{outline-offset:-9px;border-radius:20px;padding:14px 12px 16px}
   .wcard{width:84px;height:80px}
   .head .finn{width:46px}
+  .head{gap:8px}
+  .audio-btns{gap:6px}
+}
+/* iPad and phone landscape: preserve every control instead of letting the
+   viewport-height minimums force the lower part of a game off-screen. */
+@media (max-height:800px){
+  body{align-items:flex-start}
+  .book{min-height:calc(100vh - 28px)}
+  .book{min-height:calc(100dvh - 28px)}
+  .fish-stage{min-height:clamp(180px,30dvh,260px)}
+  .scene{min-height:clamp(160px,28dvh,210px)}
+  .tank{min-height:clamp(180px,30dvh,220px)}
+  .big-choice{padding:15px 10px}
+  .big-choice .em{font-size:40px}
+  .bucket{min-height:122px}
 }
 /* ---------- print: only the certificate ---------- */
 @media print{
@@ -504,6 +527,9 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outl
 
   <!-- HEADER -->
   <header class="head">
+    <a class="iconbtn home-btn" href="https://vovo.alsatian.co/" aria-label="Back to VoVo Science home" title="Back to home">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.8 10.8v9.4c0 .9.7 1.6 1.6 1.6h5.2v-6.3h4.8v6.3h5.2c.9 0 1.6-.7 1.6-1.6v-9.4L12 3.2Zm0 2.1 7.2 6v8.5h-2.8v-6.3H7.6v6.3H4.8v-8.5l7.2-6Z"/></svg>
+    </a>
     <span class="finn" id="headFinn" aria-hidden="true"></span>
     <div class="titlebox">
       <div class="kicker">Fishy Science</div>
@@ -511,6 +537,9 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outl
     </div>
     <div class="audio-btns">
       <button class="iconbtn on" id="muteBtn" aria-label="Turn sound on or off" title="Sound on/off">🔊</button>
+      <button class="iconbtn" id="fullscreenBtn" type="button" hidden aria-label="Enter full screen" title="Full screen">
+        <span id="fullscreenIcon" aria-hidden="true">⛶</span>
+      </button>
     </div>
   </header>
 
@@ -1694,6 +1723,44 @@ $('muteBtn').addEventListener('click',function(){
   this.textContent=m?'🔇':'🔊';
   this.classList.toggle('on',!m);
 });
+(function setupFullscreenButton(){
+  var btn=$('fullscreenBtn');
+  var icon=$('fullscreenIcon');
+  var root=document.documentElement;
+
+  function fullscreenElement(){
+    return document.fullscreenElement||document.webkitFullscreenElement||null;
+  }
+  function canEnterFullscreen(){
+    if(document.fullscreenEnabled===false||document.webkitFullscreenEnabled===false)return false;
+    return !!(root.requestFullscreen||root.webkitRequestFullscreen);
+  }
+  function requestFullscreen(){
+    var fn=root.requestFullscreen||root.webkitRequestFullscreen;
+    if(fn)return fn.call(root);
+  }
+  function exitFullscreen(){
+    var fn=document.exitFullscreen||document.webkitExitFullscreen;
+    if(fn)return fn.call(document);
+  }
+  function syncFullscreenButton(){
+    var active=!!fullscreenElement();
+    icon.textContent=active?'↙':'⛶';
+    btn.setAttribute('aria-pressed',String(active));
+    btn.setAttribute('aria-label',active?'Exit full screen':'Enter full screen');
+    btn.title=active?'Exit full screen':'Full screen';
+  }
+
+  if(!btn||!canEnterFullscreen())return;
+  btn.hidden=false;
+  btn.addEventListener('click',function(){
+    var action=fullscreenElement()?exitFullscreen():requestFullscreen();
+    if(action&&action.catch)action.catch(function(){});
+  });
+  document.addEventListener('fullscreenchange',syncFullscreenButton);
+  document.addEventListener('webkitfullscreenchange',syncFullscreenButton);
+  syncFullscreenButton();
+})();
 $('playBtn').addEventListener('click',function(){
   Audio_.prime();
   goTo('s-learn');
