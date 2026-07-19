@@ -623,6 +623,7 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outl
       <button class="big-choice no" id="btnSalt"><span class="em">🧂</span>Salty water</button>
       <button class="big-choice yes" id="btnFresh"><span class="em">💧</span>Fresh water</button>
     </div>
+    <button class="play" id="balloonStepNext" style="font-size:23px;padding:14px 34px;margin-top:8px;display:none">Next ▶</button>
     <button class="play" id="balloonNext" style="font-size:23px;padding:14px 34px;margin-top:8px;display:none">I get it! ▶</button>
   </section>
 
@@ -1286,21 +1287,24 @@ function waterStream(stage, x1f,y1f, x2f,y2f, warm, count, dur){
 }
 
 /* ==========================================================
-   THE BIG SECRET — Balloon fish, played as a slow little "film".
-   Tap a water and watch a 3-beat loop: (1) water moves through the
+   THE BIG SECRET — Balloon fish, played as a three-beat lesson.
+   Tap a water and watch: (1) water moves through the
    holes, (2) the fish reacts — opens wide to DRINK, or lets it out to
-   PEE, (3) the fish is comfy again. Slow + looping = easy to follow.
+   PEE, (3) the fish is comfy again. Each beat waits for the child to
+   press Next, so its narration and picture can be explored at their pace.
    ========================================================== */
-var balloonTried={salt:false,fresh:false}, balloonFilmTimer=null;
+var balloonTried={salt:false,fresh:false}, balloonSteps=[], balloonStepIndex=0, balloonKind=null;
 function setBalloonFish(expr,scale){
   var type=(mode_ === 'fresh')?'river':'ocean';
   $('balloonFish').innerHTML='<div class="balloon-body" style="transform:scale('+scale+')">'+finFish(type,expr)+'</div>';
 }
 var mode_='salt';
-function stopBalloonFilm(){ clearTimeout(balloonFilmTimer); balloonFilmTimer=null; stopDrops('balloon'); }
+function stopBalloonFilm(){ stopDrops('balloon'); }
 function startBalloon(){
   balloonTried={salt:false,fresh:false};
   stopBalloonFilm();
+  balloonSteps=[]; balloonStepIndex=0; balloonKind=null;
+  $('balloonStepNext').style.display='none';
   $('balloonNext').style.display='none';
   $('balloonStage').className='fish-stage salt'; mode_='salt';
   $('balloonHome').innerHTML=underwaterSVG('salt');
@@ -1312,7 +1316,8 @@ function startBalloon(){
 function balloonFilm(kind){
   stopBalloonFilm();
   var stage=$('balloonStage');
-  var steps = kind==='salt'
+  balloonKind=kind;
+  balloonSteps = kind==='salt'
    ? [ {e:'thirsty', s:0.72, cap:'Salty water pulls water <b>OUT</b> through the tiny holes… 💧', drops:'out',
         say:'Salty water pulls water out of the fish.'},
        {e:'drinking',s:0.9,  cap:'So the fish opens wide and <b>gulps the sea</b>! 🥤', drink:true,
@@ -1323,33 +1328,39 @@ function balloonFilm(kind){
        {e:'surprised',s:1.14,cap:'Too full! So it lets the extra out… 💦', pee:true,
         say:'The fish is too full, so it pees the extra out.'},
        {e:'happy',   s:1.0,  cap:'All comfy again! River fish <b>PEES a LOT</b> 💦', say:'All better! The river fish pees a lot.'} ];
-  var i=0;
-  function tick(){
-    if(!$('s-balloon').classList.contains('on')){ stopBalloonFilm(); return; }
-    var st=steps[i%steps.length];
-    setBalloonFish(st.e, st.s);
-    $('balloonCap').innerHTML=st.cap;
-    if(st.drops){ flowDrops(stage,'s-balloon','balloon',st.drops); }
-    else { stopDrops('balloon'); }
-    if(st.drink){ waterStream(stage,0.16,0.5, 0.44,0.62, false, 6, 1100); }
-    if(st.pee){ waterStream(stage,0.5,0.62, 0.62,0.98, true, 6, 1100); }
-    if(i<steps.length) Audio_.say(st.say);   /* narrate once through, then loop silently */
-    i++;
-    balloonFilmTimer=setTimeout(tick, 1800);
+  balloonStepIndex=0;
+  document.querySelectorAll('#s-balloon .big-choice').forEach(function(b){b.disabled=true;});
+  showBalloonStep();
+}
+function showBalloonStep(){
+  if(!$('s-balloon').classList.contains('on'))return;
+  var stage=$('balloonStage'), st=balloonSteps[balloonStepIndex];
+  setBalloonFish(st.e, st.s);
+  $('balloonCap').innerHTML=st.cap;
+  if(st.drops){ flowDrops(stage,'s-balloon','balloon',st.drops); }
+  else { stopDrops('balloon'); }
+  if(st.drink){ waterStream(stage,0.16,0.5, 0.44,0.62, false, 6, 1100); }
+  if(st.pee){ waterStream(stage,0.5,0.62, 0.62,0.98, true, 6, 1100); }
+  Audio_.say(st.say);
+  $('balloonStepNext').style.display = balloonStepIndex<balloonSteps.length-1 ? 'block' : 'none';
+  if(balloonStepIndex===balloonSteps.length-1){
+    balloonTried[balloonKind]=true;
+    document.querySelectorAll('#s-balloon .big-choice').forEach(function(b){b.disabled=false;});
+    checkBalloon();
   }
-  tick();
 }
 $('btnSalt').addEventListener('click',function(){
   mode_='salt';
   $('balloonStage').className='fish-stage salt'; $('balloonHome').innerHTML=underwaterSVG('salt');
   Audio_.good(); balloonFilm('salt');
-  balloonTried.salt=true; checkBalloon();
 });
 $('btnFresh').addEventListener('click',function(){
   mode_='fresh';
   $('balloonStage').className='fish-stage fresh'; $('balloonHome').innerHTML=underwaterSVG('fresh');
   Audio_.good(); balloonFilm('fresh');
-  balloonTried.fresh=true; checkBalloon();
+});
+$('balloonStepNext').addEventListener('click',function(){
+  if(balloonStepIndex<balloonSteps.length-1){ balloonStepIndex++; showBalloonStep(); }
 });
 function checkBalloon(){
   if(balloonTried.salt&&balloonTried.fresh&&$('balloonNext').style.display==='none'){
